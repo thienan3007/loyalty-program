@@ -44,7 +44,7 @@ jobs:
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: LoyaltyProgram
+          app-name: loyalty-program
           package: app
       - name: Logout from Azure
         run: az logout
