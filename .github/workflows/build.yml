@@ -41,9 +41,10 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Deploy to Azure
+      - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: loyalty-program
+          app-name: loyalty-group
+	    package: .
       - name: Logout from Azure
         run: az logout
