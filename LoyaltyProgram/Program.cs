@@ -2,6 +2,7 @@ using LoyaltyProgram.Models;
 using LoyaltyProgram.Services;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,10 @@ builder.Services.AddApiVersioning(o =>
         new MediaTypeApiVersionReader("ver"));
 });
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+});
 
 
 
@@ -43,6 +48,19 @@ app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllo
 app.UseStaticFiles();
 
 app.UseRouting();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    });
+}
+// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+// specifying the Swagger JSON endpoint.
+
+
 app.MapControllers();
 
 app.Run();
