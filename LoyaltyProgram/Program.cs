@@ -41,6 +41,7 @@ builder.Services.AddCors();
 builder.Services.AddScoped<BrandService, BrandServiceImpl>();
 builder.Services.AddScoped<OrganizationService, OrganizationServiceImpl>();
 builder.Services.AddScoped<LoyaltyProgramService, LoyaltyProgramServiceImpl>();
+builder.Services.AddScoped<CurrencyService, CurrencyServiceImpl>();
 
 var app = builder.Build();
 
