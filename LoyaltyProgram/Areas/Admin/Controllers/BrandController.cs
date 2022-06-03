@@ -15,7 +15,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpGet("get-brands")]
+        [HttpGet("")]
         public IActionResult FindAll()
         {
             try
