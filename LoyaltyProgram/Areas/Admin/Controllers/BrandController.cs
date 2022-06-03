@@ -29,7 +29,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpGet("get-brand/{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetBrand(int id)
         {
             try
@@ -43,7 +43,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpGet("get-count")]
+        [HttpGet("count")]
         public IActionResult GetCoount()
         {
             try
@@ -57,7 +57,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpGet("delete-brand/{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteBrand(int id)
         {
             try
@@ -72,7 +72,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpPut("update-brand/{id}")]
+        [HttpPut("{id}")]
         public IActionResult UpdateBrand([FromBody] Brand brand, int id)
         {
             try
@@ -87,7 +87,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpPost("add-brand")]
+        [HttpPost("")]
         public IActionResult AddBrand([FromBody] Brand brand)
         {
             try
