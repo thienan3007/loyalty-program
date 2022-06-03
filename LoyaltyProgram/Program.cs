@@ -42,6 +42,7 @@ builder.Services.AddScoped<BrandService, BrandServiceImpl>();
 builder.Services.AddScoped<OrganizationService, OrganizationServiceImpl>();
 builder.Services.AddScoped<LoyaltyProgramService, LoyaltyProgramServiceImpl>();
 builder.Services.AddScoped<CurrencyService, CurrencyServiceImpl>();
+builder.Services.AddScoped<MembershipService, MembershipServiceImpl>();
 
 var app = builder.Build();
 
