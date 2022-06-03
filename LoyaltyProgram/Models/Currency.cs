@@ -17,7 +17,7 @@ namespace LoyaltyProgram.Models
         public string? Description { get; set; }
         public int? LoyaltyProgramId { get; set; }
 
-        public virtual LoyaltyProgram? LoyaltyProgram { get; set; }
+        public virtual Program? LoyaltyProgram { get; set; }
         public virtual ICollection<MembershipCurrency> MembershipCurrencies { get; set; }
     }
 }

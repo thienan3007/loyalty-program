@@ -20,7 +20,6 @@ namespace LoyaltyProgram.Models
         public virtual DbSet<ConditionGroup> ConditionGroups { get; set; } = null!;
         public virtual DbSet<ConditionRule> ConditionRules { get; set; } = null!;
         public virtual DbSet<Currency> Currencies { get; set; } = null!;
-        public virtual DbSet<LoyaltyProgram> LoyaltyPrograms { get; set; } = null!;
         public virtual DbSet<MemberReferrerLevel> MemberReferrerLevels { get; set; } = null!;
         public virtual DbSet<MemberTier> MemberTiers { get; set; } = null!;
         public virtual DbSet<Membership> Memberships { get; set; } = null!;
@@ -32,6 +31,7 @@ namespace LoyaltyProgram.Models
         public virtual DbSet<OrderItemCondition> OrderItemConditions { get; set; } = null!;
         public virtual DbSet<OrderSource> OrderSources { get; set; } = null!;
         public virtual DbSet<Organization> Organizations { get; set; } = null!;
+        public virtual DbSet<Program> Programs { get; set; } = null!;
         public virtual DbSet<Tier> Tiers { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<VoucherDefinition> VoucherDefinitions { get; set; } = null!;
@@ -42,7 +42,7 @@ namespace LoyaltyProgram.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=tcp:loyaltyprogram.database.windows.net,1433;Initial Catalog=Loyalty;Persist Security Info=False;User ID=azureuser;Password=Loyalty@Program;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+                optionsBuilder.UseSqlServer("Server=tcp:loyaltyprogram.database.windows.net,1433;Initial Catalog=Loyalty;Persist Security Info=False;User ID=azureuser;Password=Loyalty@Program;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
             }
         }
 
@@ -170,30 +170,6 @@ namespace LoyaltyProgram.Models
                     .WithMany(p => p.Currencies)
                     .HasForeignKey(d => d.LoyaltyProgramId)
                     .HasConstraintName("FK_Currency_LoyaltyProgram1");
-            });
-
-            modelBuilder.Entity<LoyaltyProgram>(entity =>
-            {
-                entity.ToTable("LoyaltyProgram");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BrandId).HasColumnName("brandId");
-
-                entity.Property(e => e.Description)
-                    .HasColumnType("text")
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(50)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.HasOne(d => d.Brand)
-                    .WithMany(p => p.LoyaltyPrograms)
-                    .HasForeignKey(d => d.BrandId)
-                    .HasConstraintName("FK_LoyaltyProgram_Brand");
             });
 
             modelBuilder.Entity<MemberReferrerLevel>(entity =>
@@ -558,6 +534,30 @@ namespace LoyaltyProgram.Models
                     .HasColumnName("name");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<Program>(entity =>
+            {
+                entity.ToTable("Program");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.BrandId).HasColumnName("brandId");
+
+                entity.Property(e => e.Description)
+                    .HasColumnType("text")
+                    .HasColumnName("description");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.Brand)
+                    .WithMany(p => p.Programs)
+                    .HasForeignKey(d => d.BrandId)
+                    .HasConstraintName("FK_LoyaltyProgram_Brand");
             });
 
             modelBuilder.Entity<Tier>(entity =>

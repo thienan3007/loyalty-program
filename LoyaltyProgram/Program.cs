@@ -39,6 +39,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddCors();
 
 builder.Services.AddScoped<BrandService, BrandServiceImpl>();
+builder.Services.AddScoped<OrganizationService, OrganizationServiceImpl>();
+builder.Services.AddScoped<LoyaltyProgramService, LoyaltyProgramServiceImpl>();
 
 var app = builder.Build();
 

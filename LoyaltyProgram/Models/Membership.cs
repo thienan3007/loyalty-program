@@ -23,7 +23,7 @@ namespace LoyaltyProgram.Models
         public int? ReferrerMemberId { get; set; }
         public DateTime? ReferrerMemberDate { get; set; }
 
-        public virtual LoyaltyProgram? LoyaltyProgram { get; set; }
+        public virtual Program? LoyaltyProgram { get; set; }
         public virtual ICollection<MemberTier> MemberTiers { get; set; }
         public virtual ICollection<MembershipCurrency> MembershipCurrencies { get; set; }
         public virtual ICollection<OrderAmountActionMembershipMapping> OrderAmountActionMembershipMappings { get; set; }

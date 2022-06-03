@@ -4,23 +4,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
-    [Route("api/v{version:apiVersion}/brands")]
+    [Route("api/v{version:apiVersion}/organizations")]
     [ApiVersion("1.0")]
-    public class BrandController : Controller
+    public class OrganizationController : Controller
     {
-        private BrandService brandService;
-        public BrandController(BrandService brandService)
+        private OrganizationService organizationService;
+        public OrganizationController(OrganizationService organizationService)
         {
-            this.brandService = brandService;
+            this.organizationService = organizationService;
         }
 
         [Produces("application/json")]
-        [HttpGet("get-brands")]
+        [HttpGet("get-organizations")]
         public IActionResult FindAll()
         {
             try
             {
-                return Ok(brandService.GetBrands());
+                return Ok(organizationService.GetOrganizations());
             }
             catch
             {
@@ -29,12 +29,12 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpGet("get-brand/{id}")]
-        public IActionResult GetBrand(int id)
+        [HttpGet("get-organization/{id}")]
+        public IActionResult GetOrganization(int id)
         {
             try
             {
-                return Ok(brandService.GetBrandById(id));
+                return Ok(organizationService.GetOrganizationById(id));
             }
             catch
             {
@@ -44,11 +44,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpGet("get-count")]
-        public IActionResult GetCoount()
+        public IActionResult GetCount()
         {
             try
             {
-                return Ok(brandService.GetBrandCount());
+                return Ok(organizationService.GetCount());
             }
             catch
             {
@@ -57,12 +57,12 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpGet("delete-brand/{id}")]
+        [HttpGet("delete-organization/{id}")]
         public IActionResult DeleteBrand(int id)
         {
             try
             {
-                bool result = brandService.DeleteBrand(id);
+                bool result = organizationService.DeleteOrganization(id);
                 return Ok(result ? "Successful" : "Failed");
             }
             catch
@@ -72,12 +72,12 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpPut("update-brand/{id}")]
-        public IActionResult UpdateBrand([FromBody] Brand brand, int id)
+        [HttpPut("update-organization/{id}")]
+        public IActionResult UpdateBrand([FromBody] Organization organization, int id)
         {
             try
             {
-                bool result = brandService.UpdateBrand(brand, id);
+                bool result = organizationService.UpdateOrganization(organization, id);
                 return Ok(result ? "Success" : "Failed");   
             }
             catch
@@ -87,12 +87,12 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         }
 
         [Produces("application/json")]
-        [HttpPost("add-brand")]
-        public IActionResult AddBrand([FromBody] Brand brand)
+        [HttpPost("add-organization")]
+        public IActionResult AddBrand([FromBody] Organization organization)
         {
             try
             {
-                bool result = brandService.AddBrand(brand);
+                bool result = organizationService.AddOrganization(organization);
                 return Ok(result ? "Successful" : "Failed");
             }
             catch

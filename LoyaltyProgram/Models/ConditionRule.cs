@@ -24,7 +24,7 @@ namespace LoyaltyProgram.Models
         public bool? Status { get; set; }
         public string? Description { get; set; }
 
-        public virtual LoyaltyProgram? LoyaltyProgram { get; set; }
+        public virtual Program? LoyaltyProgram { get; set; }
         public virtual ICollection<ConditionGroup> ConditionGroups { get; set; }
     }
 }
