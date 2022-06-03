@@ -52,18 +52,15 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger(options =>
 {
-    app.UseSwagger(options =>
-    {
-        options.SerializeAsV2 = true;
-    });
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.RoutePrefix = string.Empty;
-    });
-}
+    options.SerializeAsV2 = true;
+});
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    c.RoutePrefix = string.Empty;
+});
 // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
 // specifying the Swagger JSON endpoint.
 
