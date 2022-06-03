@@ -28,7 +28,7 @@ builder.Services.AddApiVersioning(o =>
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Loyalty API", Version = "v1" });
 });
 
 
@@ -58,7 +58,7 @@ app.UseSwagger(options =>
 });
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Loyalty API V1");
     c.RoutePrefix = string.Empty;
 });
 // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
