@@ -244,6 +244,10 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.CanReceivePromotions).HasColumnName("canReceivePromotions");
 
+                entity.Property(e => e.Description)
+                    .HasColumnType("text")
+                    .HasColumnName("description");
+
                 entity.Property(e => e.EnrollmenDate)
                     .HasColumnType("date")
                     .HasColumnName("enrollmenDate");
@@ -268,6 +272,8 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.ReferrerMemberId).HasColumnName("referrerMemberId");
 
+                entity.Property(e => e.Status).HasColumnName("status");
+
                 entity.HasOne(d => d.LoyaltyProgram)
                     .WithMany(p => p.Memberships)
                     .HasForeignKey(d => d.LoyaltyProgramId)
@@ -284,6 +290,10 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.CurrencyId).HasColumnName("currencyId");
 
+                entity.Property(e => e.Description)
+                    .HasColumnType("text")
+                    .HasColumnName("description");
+
                 entity.Property(e => e.ExpirationPoints).HasColumnName("expirationPoints");
 
                 entity.Property(e => e.LastResetDate)
@@ -297,6 +307,8 @@ namespace LoyaltyProgram.Models
                     .HasColumnName("name");
 
                 entity.Property(e => e.PointsBalance).HasColumnName("pointsBalance");
+
+                entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.Property(e => e.TotalPointsAccrued).HasColumnName("totalPointsAccrued");
 

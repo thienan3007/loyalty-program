@@ -21,6 +21,8 @@ namespace LoyaltyProgram.Models
         public double? ExpirationPoints { get; set; }
         public int? MembershipId { get; set; }
         public int? CurrencyId { get; set; }
+        public bool? Status { get; set; }
+        public string? Description { get; set; }
 
         public virtual Currency? Currency { get; set; }
         public virtual Membership? Membership { get; set; }

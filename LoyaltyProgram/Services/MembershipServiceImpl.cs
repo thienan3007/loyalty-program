@@ -22,27 +22,73 @@ namespace LoyaltyProgram.Services
 
         public bool DeleteMembership(int id)
         {
+            var membership = databaseContext.Memberships.FirstOrDefault(m => m.AccountId == id);
+            if (membership != null)
+            {
+                if (membership.Status == true)
+                {
+                    membership.Status = false;
+                    return databaseContext.SaveChanges() > 0;
+                }
+            }
             return false;
         }
 
         public int GetCount()
         {
-            throw new NotImplementedException();
+            return databaseContext.Memberships.Count();
         }
 
         public Membership GetMembershipById(int id)
         {
-            throw new NotImplementedException();
+            var membership = databaseContext.Memberships.FirstOrDefault(m => m.AccountId == id);
+            if (membership != null)
+            {
+                return membership;
+            }
+            return null;
         }
 
         public List<Membership> GetMemberships()
         {
-            throw new NotImplementedException();
+            return databaseContext.Memberships.Where(m => m.Status == true).ToList();
         }
 
         public bool UpdateMembership(Membership membership, int id)
         {
-            throw new NotImplementedException();
+            var membershipDb = databaseContext.Memberships.FirstOrDefault(m => m.AccountId == id);
+            if (membership != null)
+            {
+                if (membershipDb != null)
+                {
+                    if (membershipDb.Status == true)
+                    {
+                        if (membership.MembershipEndDate != null)
+                            membershipDb.MembershipEndDate = membership.MembershipEndDate;
+                        if (membership.CanReceivePromotions != null)
+                            membershipDb.CanReceivePromotions = membership.CanReceivePromotions;
+                        if (membership.Status != null)
+                            membershipDb.Status = membership.Status;
+                        if (membership.LastTransactionDate != null)
+                            membershipDb.LastTransactionDate = membership.LastTransactionDate;
+                        if (membership.Description != null)
+                            membershipDb.Description = membership.Description;
+                        if (membership.EnrollmenDate != null)
+                            membershipDb.EnrollmenDate = membership.EnrollmenDate;
+                        if (membership.LoyaltyProgramId != null)
+                            membershipDb.LoyaltyProgramId = membership.LoyaltyProgramId;
+                        if (membership.MembershipCode != null)
+                            membershipDb.MembershipCode = membership.MembershipCode;
+                        if (membership.ReferrerMemberId != null)
+                            membershipDb.ReferrerMemberId = membership.ReferrerMemberId;
+                        if (membership.ReferrerMemberDate != null)
+                            membershipDb.ReferrerMemberDate = membership.ReferrerMemberDate;
+
+                        return databaseContext.SaveChanges() > 0;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

@@ -22,6 +22,8 @@ namespace LoyaltyProgram.Models
         public string? MembershipCode { get; set; }
         public int? ReferrerMemberId { get; set; }
         public DateTime? ReferrerMemberDate { get; set; }
+        public bool? Status { get; set; }
+        public string? Description { get; set; }
 
         public virtual Program? LoyaltyProgram { get; set; }
         public virtual ICollection<MemberTier> MemberTiers { get; set; }
