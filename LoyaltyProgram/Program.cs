@@ -54,10 +54,14 @@ app.UseRouting();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(options =>
+    {
+        options.SerializeAsV2 = true;
+    });
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.RoutePrefix = string.Empty;
     });
 }
 // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
