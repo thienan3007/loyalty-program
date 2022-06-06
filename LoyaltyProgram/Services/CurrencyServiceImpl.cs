@@ -61,11 +61,6 @@ namespace LoyaltyProgram.Services
             {
                 if (currencyDb.Status == true)
                 {
-                    //brandDb.Status = brand.Status;
-                    //brandDb.Name = brand.Name;
-                    //brandDb.Description = brand.Description;
-                    //brandDb.OrganizationId = brand.OrganizationId;
-
                     if (currency.Name != null)
                         currencyDb.Name = currency.Name;
                     if (currency.Status != null)

@@ -43,6 +43,7 @@ builder.Services.AddScoped<OrganizationService, OrganizationServiceImpl>();
 builder.Services.AddScoped<LoyaltyProgramService, LoyaltyProgramServiceImpl>();
 builder.Services.AddScoped<CurrencyService, CurrencyServiceImpl>();
 builder.Services.AddScoped<MembershipService, MembershipServiceImpl>();
+builder.Services.AddScoped<TierService, TierServiceImpl>();
 
 var app = builder.Build();
 
