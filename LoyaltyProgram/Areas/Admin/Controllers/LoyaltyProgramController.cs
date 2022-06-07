@@ -44,7 +44,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpGet("count")]
-        public IActionResult GetCoount()
+        public IActionResult GetCount()
         {
             try
             {
@@ -63,7 +63,9 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             try
             {
                 bool result = loyaltyProgramService.DeleteProgram(id);
-                return Ok(result ? "Successful" : "Failed");
+                if (result)
+                    return Ok("Successful");
+                return BadRequest("Failed");
             }
             catch
             {
@@ -78,7 +80,9 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             try
             {
                 bool result = loyaltyProgramService.UpdateProgram(program, id);
-                return Ok(result ? "Success" : "Failed");
+                if (result)
+                    return Ok("Successful");
+                return BadRequest("Failed");
             }
             catch
             {
@@ -93,7 +97,9 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             try
             {
                 bool result = loyaltyProgramService.AddProgram(program);
-                return Ok(result ? "Successful" : "Failed");
+                if (result)
+                    return Ok("Successful");
+                return BadRequest("Failed");
             }
             catch
             {

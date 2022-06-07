@@ -7,7 +7,7 @@ namespace LoyaltyProgram.Models
     {
         public int MembershipId { get; set; }
         public int VoucherDefinitionId { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public DateTime? UseDate { get; set; }
         public bool? IsPartialRedeemable { get; set; }
         public double? RedeemedValue { get; set; }

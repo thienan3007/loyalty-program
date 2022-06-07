@@ -16,22 +16,21 @@ namespace LoyaltyProgram.Models
         {
         }
 
+        public virtual DbSet<Action> Actions { get; set; } = null!;
         public virtual DbSet<Brand> Brands { get; set; } = null!;
         public virtual DbSet<ConditionGroup> ConditionGroups { get; set; } = null!;
         public virtual DbSet<ConditionRule> ConditionRules { get; set; } = null!;
         public virtual DbSet<Currency> Currencies { get; set; } = null!;
+        public virtual DbSet<EventSource> EventSources { get; set; } = null!;
         public virtual DbSet<MemberReferrerLevel> MemberReferrerLevels { get; set; } = null!;
         public virtual DbSet<MemberTier> MemberTiers { get; set; } = null!;
         public virtual DbSet<Membership> Memberships { get; set; } = null!;
         public virtual DbSet<MembershipCurrency> MembershipCurrencies { get; set; } = null!;
-        public virtual DbSet<Order> Orders { get; set; } = null!;
-        public virtual DbSet<OrderAmountActionMembershipMapping> OrderAmountActionMembershipMappings { get; set; } = null!;
         public virtual DbSet<OrderAmountCondition> OrderAmountConditions { get; set; } = null!;
-        public virtual DbSet<OrderItemActionMembershipMapping> OrderItemActionMembershipMappings { get; set; } = null!;
         public virtual DbSet<OrderItemCondition> OrderItemConditions { get; set; } = null!;
-        public virtual DbSet<OrderSource> OrderSources { get; set; } = null!;
         public virtual DbSet<Organization> Organizations { get; set; } = null!;
         public virtual DbSet<Program> Programs { get; set; } = null!;
+        public virtual DbSet<Reward> Rewards { get; set; } = null!;
         public virtual DbSet<Tier> Tiers { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<VoucherDefinition> VoucherDefinitions { get; set; } = null!;
@@ -48,6 +47,58 @@ namespace LoyaltyProgram.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Action>(entity =>
+            {
+                entity.ToTable("Action");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ActionDate)
+                    .HasColumnType("date")
+                    .HasColumnName("action_date");
+
+                entity.Property(e => e.Description).HasColumnName("description");
+
+                entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyalty_program_id");
+
+                entity.Property(e => e.MembershipId).HasColumnName("membership_id");
+
+                entity.Property(e => e.MembershipRewardId).HasColumnName("membership_reward_id");
+
+                entity.Property(e => e.OrderId).HasColumnName("order_id");
+
+                entity.Property(e => e.Points).HasColumnName("points");
+
+                entity.Property(e => e.ReferrerId).HasColumnName("referrer_id");
+
+                entity.Property(e => e.ReferrerPoints).HasColumnName("referrer_points");
+
+                entity.Property(e => e.ReferrerRewardId).HasColumnName("referrer_reward_id");
+
+                entity.Property(e => e.RewardId).HasColumnName("reward_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(200)
+                    .HasColumnName("type");
+
+                entity.HasOne(d => d.LoyaltyProgram)
+                    .WithMany(p => p.Actions)
+                    .HasForeignKey(d => d.LoyaltyProgramId)
+                    .HasConstraintName("FK_Action_Program");
+
+                entity.HasOne(d => d.Membership)
+                    .WithMany(p => p.Actions)
+                    .HasForeignKey(d => d.MembershipId)
+                    .HasConstraintName("FK_Action_Membership");
+
+                entity.HasOne(d => d.Reward)
+                    .WithMany(p => p.Actions)
+                    .HasForeignKey(d => d.RewardId)
+                    .HasConstraintName("FK_Action_Reward");
+            });
+
             modelBuilder.Entity<Brand>(entity =>
             {
                 entity.ToTable("Brand");
@@ -170,6 +221,25 @@ namespace LoyaltyProgram.Models
                     .WithMany(p => p.Currencies)
                     .HasForeignKey(d => d.LoyaltyProgramId)
                     .HasConstraintName("FK_Currency_LoyaltyProgram1");
+            });
+
+            modelBuilder.Entity<EventSource>(entity =>
+            {
+                entity.HasKey(e => e.PartnerId);
+
+                entity.ToTable("EventSource");
+
+                entity.Property(e => e.PartnerId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("partner_id");
+
+                entity.Property(e => e.Description).HasColumnName("description");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(200)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Status).HasColumnName("status");
             });
 
             modelBuilder.Entity<MemberReferrerLevel>(entity =>
@@ -327,77 +397,6 @@ namespace LoyaltyProgram.Models
                     .HasConstraintName("FK_MembershipCurrency_Membership");
             });
 
-            modelBuilder.Entity<Order>(entity =>
-            {
-                entity.ToTable("Order");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Description)
-                    .HasColumnType("text")
-                    .HasColumnName("description");
-
-                entity.Property(e => e.MemberShipId).HasColumnName("memberShipId");
-
-                entity.Property(e => e.OrderJsonString)
-                    .HasColumnType("text")
-                    .HasColumnName("orderJsonString");
-
-                entity.Property(e => e.OrderSourceId).HasColumnName("orderSourceId");
-
-                entity.Property(e => e.RuleTypeId).HasColumnName("ruleTypeId");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.Property(e => e.TotalAmount).HasColumnName("totalAmount");
-
-                entity.Property(e => e.TotalOrderBonusPoints).HasColumnName("totalOrderBonusPoints");
-
-                entity.HasOne(d => d.OrderSource)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.OrderSourceId)
-                    .HasConstraintName("FK_Order_OrderSource");
-            });
-
-            modelBuilder.Entity<OrderAmountActionMembershipMapping>(entity =>
-            {
-                entity.HasKey(e => new { e.OrderId, e.MembershipId });
-
-                entity.ToTable("OrderAmountActionMembershipMapping");
-
-                entity.Property(e => e.OrderId).HasColumnName("orderId");
-
-                entity.Property(e => e.MembershipId).HasColumnName("membershipId");
-
-                entity.Property(e => e.ActionDate)
-                    .HasColumnType("date")
-                    .HasColumnName("actionDate");
-
-                entity.Property(e => e.Description)
-                    .HasColumnType("text")
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Points).HasColumnName("points");
-
-                entity.Property(e => e.ReferrerId).HasColumnName("referrerId");
-
-                entity.Property(e => e.ReferrerPoints).HasColumnName("referrerPoints");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.HasOne(d => d.Membership)
-                    .WithMany(p => p.OrderAmountActionMembershipMappings)
-                    .HasForeignKey(d => d.MembershipId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderAmountActionMembershipMapping_Membership");
-
-                entity.HasOne(d => d.Order)
-                    .WithMany(p => p.OrderAmountActionMembershipMappings)
-                    .HasForeignKey(d => d.OrderId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderAmountActionMembershipMapping_Order");
-            });
-
             modelBuilder.Entity<OrderAmountCondition>(entity =>
             {
                 entity.ToTable("OrderAmountCondition");
@@ -434,45 +433,6 @@ namespace LoyaltyProgram.Models
                     .HasConstraintName("FK_OrderAmountCondition_ConditionGroup");
             });
 
-            modelBuilder.Entity<OrderItemActionMembershipMapping>(entity =>
-            {
-                entity.HasKey(e => new { e.OrderId, e.MembershipId });
-
-                entity.ToTable("OrderItemActionMembershipMapping");
-
-                entity.Property(e => e.OrderId).HasColumnName("orderId");
-
-                entity.Property(e => e.MembershipId).HasColumnName("membershipId");
-
-                entity.Property(e => e.ActionDate)
-                    .HasColumnType("date")
-                    .HasColumnName("actionDate");
-
-                entity.Property(e => e.Description)
-                    .HasColumnType("text")
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Points).HasColumnName("points");
-
-                entity.Property(e => e.ReferrerId).HasColumnName("referrerId");
-
-                entity.Property(e => e.ReferrerPoints).HasColumnName("referrerPoints");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.HasOne(d => d.Membership)
-                    .WithMany(p => p.OrderItemActionMembershipMappings)
-                    .HasForeignKey(d => d.MembershipId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderItemActionMembershipMapping_Membership");
-
-                entity.HasOne(d => d.Order)
-                    .WithMany(p => p.OrderItemActionMembershipMappings)
-                    .HasForeignKey(d => d.OrderId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderItemActionMembershipMapping_Order");
-            });
-
             modelBuilder.Entity<OrderItemCondition>(entity =>
             {
                 entity.ToTable("OrderItemCondition");
@@ -499,36 +459,6 @@ namespace LoyaltyProgram.Models
                     .WithMany(p => p.OrderItemConditions)
                     .HasForeignKey(d => d.ConditionGroupId)
                     .HasConstraintName("FK_OrderItemCondition_ConditionGroup");
-            });
-
-            modelBuilder.Entity<OrderSource>(entity =>
-            {
-                entity.ToTable("OrderSource");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Address)
-                    .HasColumnType("text")
-                    .HasColumnName("address");
-
-                entity.Property(e => e.Description)
-                    .HasColumnType("text")
-                    .HasColumnName("description");
-
-                entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyaltyProgramId");
-
-                entity.Property(e => e.OrderDate)
-                    .HasColumnType("date")
-                    .HasColumnName("orderDate");
-
-                entity.Property(e => e.PartnerId).HasColumnName("partnerId");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.HasOne(d => d.LoyaltyProgram)
-                    .WithMany(p => p.OrderSources)
-                    .HasForeignKey(d => d.LoyaltyProgramId)
-                    .HasConstraintName("FK_OrderSource_LoyaltyProgram");
             });
 
             modelBuilder.Entity<Organization>(entity =>
@@ -570,6 +500,44 @@ namespace LoyaltyProgram.Models
                     .WithMany(p => p.Programs)
                     .HasForeignKey(d => d.BrandId)
                     .HasConstraintName("FK_LoyaltyProgram_Brand");
+            });
+
+            modelBuilder.Entity<Reward>(entity =>
+            {
+                entity.ToTable("Reward");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("date")
+                    .HasColumnName("created_at");
+
+                entity.Property(e => e.Description).HasColumnName("description");
+
+                entity.Property(e => e.Images).HasColumnName("images");
+
+                entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyalty_program_id");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(200)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Paramaters).HasColumnName("paramaters");
+
+                entity.Property(e => e.Redeemed).HasColumnName("redeemed");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Stock).HasColumnName("stock");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(50)
+                    .HasColumnName("type");
+
+                entity.HasOne(d => d.LoyaltyProgram)
+                    .WithMany(p => p.Rewards)
+                    .HasForeignKey(d => d.LoyaltyProgramId)
+                    .HasConstraintName("FK_Reward_Program");
             });
 
             modelBuilder.Entity<Tier>(entity =>

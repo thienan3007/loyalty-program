@@ -11,7 +11,7 @@ namespace LoyaltyProgram.Models
         public DateTime? ExpirationDate { get; set; }
         public DateTime? EffectiveDate { get; set; }
         public DateTime? UdpateTierDate { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public string? Description { get; set; }
 
         public virtual Membership LoyaltyMember { get; set; } = null!;

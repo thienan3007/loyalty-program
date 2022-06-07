@@ -22,12 +22,21 @@ namespace LoyaltyProgram.Services
 
         public bool DeleteTier(int id)
         {
-            throw new NotImplementedException();
+            var tier = databaseContext.Tiers.FirstOrDefault(b => b.Id == id);
+            if (tier != null)
+            {
+                if (tier.Status == 1)
+                {
+                    tier.Status = 0;
+                    return databaseContext.SaveChanges() > 0;
+                }
+            }
+            return false;
         }
 
         public List<Tier> GetTiers()
         {
-            return databaseContext.Tiers.Where(t => t.Status == true).ToList();
+            return databaseContext.Tiers.Where(t => t.Status == 1).ToList();
         }
 
         public Tier GetTierByID(int id)
@@ -35,7 +44,7 @@ namespace LoyaltyProgram.Services
             var tier = databaseContext.Tiers.FirstOrDefault(t => t.Id == id);
             if (tier != null)
             {
-                if (tier.Status == true)
+                if (tier.Status == 1)
                 {
                     return tier;
                 }
@@ -53,7 +62,7 @@ namespace LoyaltyProgram.Services
             var tierDB = databaseContext.Tiers.FirstOrDefault(t => t.Id == id);
             if (tierDB != null)
             {
-                if (tierDB.Status == true)
+                if (tierDB.Status == 1)
                 {
                     if (tier.Name != null)
                         tierDB.Name = tier.Name;

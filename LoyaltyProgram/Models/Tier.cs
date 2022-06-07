@@ -12,7 +12,7 @@ namespace LoyaltyProgram.Models
 
         public int Id { get; set; }
         public string? Name { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public int? LoyaltyProgramId { get; set; }
         public int? SequenceNumber { get; set; }
         public double? MinPoints { get; set; }

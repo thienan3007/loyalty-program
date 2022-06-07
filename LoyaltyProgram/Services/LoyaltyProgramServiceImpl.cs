@@ -24,9 +24,9 @@ namespace LoyaltyProgram.Services
             var program= databaseContext.Programs.FirstOrDefault(o => o.Id == id);
             if (program != null)
             {
-                if (program.Status == true)
+                if (program.Status == 1)
                 {
-                    program.Status = false;
+                    program.Status = 0;
                     return databaseContext.SaveChanges() > 0;
                 }
             }
@@ -36,7 +36,7 @@ namespace LoyaltyProgram.Services
 
         public int GetProgramCount()
         {
-            return databaseContext.Programs.Count();
+            return databaseContext.Programs.Where(p => p.Status == 1).Count();
         }
 
         public Models.Program GetProgramById(int id)
@@ -44,7 +44,7 @@ namespace LoyaltyProgram.Services
             var program= databaseContext.Programs.FirstOrDefault(o => o.Id == id);
             if (program != null)
             {
-                if (program.Status == true)
+                if (program.Status == 1)
                 {
                     return program;
                 }
@@ -55,7 +55,7 @@ namespace LoyaltyProgram.Services
 
         public List<Models.Program> GetPrograms()
         {
-            return databaseContext.Programs.Where(o => o.Status == true).ToList();
+            return databaseContext.Programs.Where(o => o.Status == 1).ToList();
         }
 
         public bool UpdateProgram(Models.Program program, int id)
@@ -64,7 +64,7 @@ namespace LoyaltyProgram.Services
 
             if (programDb != null)
             {
-                if (programDb.Status == true)
+                if (programDb.Status == 1)
                 {
                     if (program.Name != null)
                         programDb.Name = program.Name;

@@ -22,9 +22,9 @@ namespace LoyaltyProgram.Services
             var currency = _databaseContext.Currencies.FirstOrDefault(c => c.Id == id);
             if (currency != null)
             {
-                if (currency.Status == true)
+                if (currency.Status == 1)
                 {
-                    currency.Status = false;
+                    currency.Status = 0;
                     return _databaseContext.SaveChanges() > 0;
                 }
             }
@@ -36,7 +36,7 @@ namespace LoyaltyProgram.Services
             var currency= _databaseContext.Currencies.FirstOrDefault(c => c.Id == id);
             if (currency != null)
             {
-                if (currency.Status == true)
+                if (currency.Status == 1)
                 {
                     return currency;
                 }
@@ -46,12 +46,12 @@ namespace LoyaltyProgram.Services
 
         public int GetCount()
         {
-            return _databaseContext.Currencies.Where(c => c.Status == true).Count();
+            return _databaseContext.Currencies.Where(c => c.Status == 1).Count();
         }
 
         public List<Currency> GetCurrencies()
         {
-            return _databaseContext.Currencies.Where(c => c.Status == true).ToList();
+            return _databaseContext.Currencies.Where(c => c.Status == 1).ToList();
         }
 
         public bool UpdateCurency(Currency currency, int id)
@@ -59,7 +59,7 @@ namespace LoyaltyProgram.Services
             var currencyDb = GetCurrencyById(id);
             if (currencyDb != null)
             {
-                if (currencyDb.Status == true)
+                if (currencyDb.Status == 1)
                 {
                     if (currency.Name != null)
                         currencyDb.Name = currency.Name;

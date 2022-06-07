@@ -11,7 +11,7 @@ namespace LoyaltyProgram.Models
         public int? NextQuantity { get; set; }
         public int? TierSequenceNumber { get; set; }
         public double? QuantityGainPoint { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public string? Description { get; set; }
 
         public virtual ConditionGroup? ConditionGroup { get; set; }

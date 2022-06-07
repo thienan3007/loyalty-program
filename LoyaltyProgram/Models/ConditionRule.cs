@@ -21,7 +21,7 @@ namespace LoyaltyProgram.Models
         public double? MinPointsForRedemption { get; set; }
         public double? MinRedeemablePoints { get; set; }
         public double? MinRedeemableAmount { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public string? Description { get; set; }
 
         public virtual Program? LoyaltyProgram { get; set; }

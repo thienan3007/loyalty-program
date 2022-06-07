@@ -13,7 +13,7 @@ namespace LoyaltyProgram.Models
         public int Id { get; set; }
         public string? Name { get; set; }
         public DateTime? NextResetDate { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public string? Description { get; set; }
         public int? LoyaltyProgramId { get; set; }
 

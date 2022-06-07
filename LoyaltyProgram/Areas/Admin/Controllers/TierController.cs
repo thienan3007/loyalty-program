@@ -63,7 +63,9 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             try
             {
                 bool result = tierService.DeleteTier(id);
-                return Ok(result ? "Successful" : "Failed");
+                if (result)
+                    return Ok("Successful");
+                return BadRequest("Failed");
             }
             catch
             {
@@ -78,7 +80,9 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             try
             {
                 bool result = tierService.UpdateTier(tier, id);
-                return Ok(result ? "Success" : "Failed");   
+                if (result)
+                    return Ok("Successful");
+                return BadRequest("Failed");
             }
             catch
             {
@@ -93,7 +97,9 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             try
             {
                 bool result = tierService.AddTier(tier);
-                return Ok(result ? "Successful" : "Failed");
+                if (result)
+                    return Ok("Successful");
+                return BadRequest("Failed");
             }
             catch
             {

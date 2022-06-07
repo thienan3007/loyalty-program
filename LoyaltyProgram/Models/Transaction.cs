@@ -11,7 +11,7 @@ namespace LoyaltyProgram.Models
         public double? Points { get; set; }
         public int? ReferrerId { get; set; }
         public double? ReferrerPoints { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public int? OrderId { get; set; }
         public string? Description { get; set; }
         public int? MemberCurrencyId { get; set; }

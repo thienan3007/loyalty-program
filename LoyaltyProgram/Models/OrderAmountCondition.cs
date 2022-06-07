@@ -15,7 +15,7 @@ namespace LoyaltyProgram.Models
         public double? NextOrderTotalAmountAfterDiscount { get; set; }
         public double? OrderTotalAmountAfterDiscountGainPoint { get; set; }
         public int? TierSequenceNumber { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public string? Description { get; set; }
 
         public virtual ConditionGroup? ConditionGroup { get; set; }

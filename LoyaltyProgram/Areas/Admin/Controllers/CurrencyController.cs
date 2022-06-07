@@ -63,7 +63,9 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             try
             {
                 bool result = currencyService.DeleteCurency(id);
-                return Ok(result ? "Successful" : "Failed");
+                if (result)
+                    return Ok("Successful");
+                return BadRequest("Failed");
             }
             catch
             {
@@ -78,7 +80,9 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             try
             {
                 bool result = currencyService.UpdateCurency(currency, id);
-                return Ok(result ? "Success" : "Failed");   
+                if (result)
+                    return Ok("Successful");
+                return BadRequest("Failed");
             }
             catch
             {
@@ -93,7 +97,9 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             try
             {
                 bool result = currencyService.AddCurrency(currency);
-                return Ok(result ? "Successful" : "Failed");
+                if (result)
+                    return Ok("Successful");
+                return BadRequest("Failed");
             }
             catch
             {

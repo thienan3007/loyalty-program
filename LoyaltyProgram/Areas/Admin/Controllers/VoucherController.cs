@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
-    [Route("api/v{version:apiVersion}/organizations")]
+    [Route("api/v{version:apiVersion}/vouchers")]
     [ApiVersion("1.0")]
-    public class OrganizationController : Controller
+    public class VoucherController : Controller
     {
-        private OrganizationService organizationService;
-        public OrganizationController(OrganizationService organizationService)
+        private VoucherDefinitionService voucherDefinitionService;
+        public VoucherController(VoucherDefinitionService voucherDefinitionService)
         {
-            this.organizationService = organizationService;
+            this.voucherDefinitionService = voucherDefinitionService;
         }
 
         [Produces("application/json")]
@@ -20,7 +20,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         {
             try
             {
-                return Ok(organizationService.GetOrganizations());
+                return Ok(voucherDefinitionService.GetVouchers());
             }
             catch
             {
@@ -30,11 +30,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpGet("{id}")]
-        public IActionResult GetOrganization(int id)
+        public IActionResult GetVoucher(int id)
         {
             try
             {
-                return Ok(organizationService.GetOrganizationById(id));
+                return Ok(voucherDefinitionService.GetVoucher(id));
             }
             catch
             {
@@ -48,7 +48,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         {
             try
             {
-                return Ok(organizationService.GetCount());
+                return Ok(voucherDefinitionService.GetCount());
             }
             catch
             {
@@ -58,11 +58,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpDelete("{id}")]
-        public IActionResult DeleteBrand(int id)
+        public IActionResult DeleteVoucher(int id)
         {
             try
             {
-                bool result = organizationService.DeleteOrganization(id);
+                bool result = voucherDefinitionService.DeleteVoucher(id);
                 if (result)
                     return Ok("Successful");
                 return BadRequest("Failed");
@@ -75,11 +75,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpPut("{id}")]
-        public IActionResult UpdateBrand([FromBody] Organization organization, int id)
+        public IActionResult UpdateVoucher([FromBody] VoucherDefinition voucher, int id)
         {
             try
             {
-                bool result = organizationService.UpdateOrganization(organization, id);
+                bool result = voucherDefinitionService.UpdateVoucher(voucher, id);
                 if (result)
                     return Ok("Successful");
                 return BadRequest("Failed");
@@ -92,11 +92,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpPost("")]
-        public IActionResult AddBrand([FromBody] Organization organization)
+        public IActionResult AddVoucher([FromBody] VoucherDefinition voucher)
         {
             try
             {
-                bool result = organizationService.AddOrganization(organization);
+                bool result = voucherDefinitionService.AddVoucher(voucher);
                 if (result)
                     return Ok("Successful");
                 return BadRequest("Failed");

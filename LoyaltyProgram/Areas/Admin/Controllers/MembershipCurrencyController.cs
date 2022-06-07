@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
-    [Route("api/v{version:apiVersion}/organizations")]
+    [Route("api/v{version:apiVersion}/member-currencies")]
     [ApiVersion("1.0")]
-    public class OrganizationController : Controller
+    public class MembershipCurrencyController : Controller
     {
-        private OrganizationService organizationService;
-        public OrganizationController(OrganizationService organizationService)
+        private MemberCurrencyService memberCurrencyService;
+        public MembershipCurrencyController(MemberCurrencyService memberCurrencyService)
         {
-            this.organizationService = organizationService;
+            this.memberCurrencyService = memberCurrencyService;
         }
 
         [Produces("application/json")]
@@ -20,7 +20,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         {
             try
             {
-                return Ok(organizationService.GetOrganizations());
+                return Ok(memberCurrencyService.GetMembershipCurrencies());
             }
             catch
             {
@@ -30,11 +30,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpGet("{id}")]
-        public IActionResult GetOrganization(int id)
+        public IActionResult GetMembershipCurrency(int id)
         {
             try
             {
-                return Ok(organizationService.GetOrganizationById(id));
+                return Ok(memberCurrencyService.GetMembershipCurrency(id));
             }
             catch
             {
@@ -48,7 +48,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         {
             try
             {
-                return Ok(organizationService.GetCount());
+                return Ok(memberCurrencyService.GetCount());
             }
             catch
             {
@@ -58,14 +58,14 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpDelete("{id}")]
-        public IActionResult DeleteBrand(int id)
+        public IActionResult DeleteMembershipCurrency(int id)
         {
             try
             {
-                bool result = organizationService.DeleteOrganization(id);
-                if (result)
+                bool result = memberCurrencyService.DeleteMembershipCurrency(id);
+                if (result)             
                     return Ok("Successful");
-                return BadRequest("Failed");
+                return BadRequest("Cannot find this record");
             }
             catch
             {
@@ -75,11 +75,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpPut("{id}")]
-        public IActionResult UpdateBrand([FromBody] Organization organization, int id)
+        public IActionResult UpdateMembershipCurrency([FromBody] MembershipCurrency membershipCurrency, int id)
         {
             try
             {
-                bool result = organizationService.UpdateOrganization(organization, id);
+                bool result = memberCurrencyService.UpdateMembershipCurrency(membershipCurrency, id);
                 if (result)
                     return Ok("Successful");
                 return BadRequest("Failed");
@@ -92,11 +92,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpPost("")]
-        public IActionResult AddBrand([FromBody] Organization organization)
+        public IActionResult AddMembershipCurrency([FromBody] MembershipCurrency membershipCurrency)
         {
             try
             {
-                bool result = organizationService.AddOrganization(organization);
+                bool result = memberCurrencyService.AddMembershipCurrency(membershipCurrency);
                 if (result)
                     return Ok("Successful");
                 return BadRequest("Failed");

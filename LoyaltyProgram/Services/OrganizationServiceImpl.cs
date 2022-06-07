@@ -24,9 +24,9 @@ namespace LoyaltyProgram.Services
             var organization = databaseContext.Organizations.FirstOrDefault(o => o.Id == organizationId);
             if (organization != null)
             {
-                if (organization.Status == true)
+                if (organization.Status == 1)
                 {
-                    organization.Status = false;
+                    organization.Status = 0;
                     return databaseContext.SaveChanges() > 0;
                 }
             }
@@ -36,7 +36,7 @@ namespace LoyaltyProgram.Services
 
         public int GetCount()
         {
-            return databaseContext.Organizations.Count();
+            return databaseContext.Organizations.Where(o => o.Status == 1).Count();
         }
 
         public Organization GetOrganizationById(int organizationId)
@@ -44,7 +44,7 @@ namespace LoyaltyProgram.Services
             var organization = databaseContext.Organizations.FirstOrDefault(o => o.Id == organizationId);
             if (organization != null)
             {
-                if (organization.Status == true)
+                if (organization.Status == 1)
                 {
                     return organization;
                 }
@@ -55,7 +55,7 @@ namespace LoyaltyProgram.Services
 
         public List<Organization> GetOrganizations()
         {
-            return databaseContext.Organizations.Where(o => o.Status == true).ToList();
+            return databaseContext.Organizations.Where(o => o.Status == 1).ToList();
         }
 
         public bool UpdateOrganization(Organization organization, int id)
@@ -64,7 +64,7 @@ namespace LoyaltyProgram.Services
 
             if (organizationDb != null)
             {
-                if (organizationDb.Status == true)
+                if (organizationDb.Status == 1)
                 {
                     if (organization.Name != null)
                         organizationDb.Name = organization.Name;

@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
-    [Route("api/v{version:apiVersion}/organizations")]
+    [Route("api/v{version:apiVersion}/member-referrer-levels")]
     [ApiVersion("1.0")]
-    public class OrganizationController : Controller
+    public class MemberReferrerLevelController : Controller
     {
-        private OrganizationService organizationService;
-        public OrganizationController(OrganizationService organizationService)
+        private MemberReferrerLevelService memberReferrerLevelService;
+        public MemberReferrerLevelController(MemberReferrerLevelService memberReferrerLevelService)
         {
-            this.organizationService = organizationService;
+            this.memberReferrerLevelService = memberReferrerLevelService;
         }
 
         [Produces("application/json")]
@@ -20,7 +20,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         {
             try
             {
-                return Ok(organizationService.GetOrganizations());
+                return Ok(memberReferrerLevelService.GetMemberReferrerLevels());
             }
             catch
             {
@@ -30,11 +30,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpGet("{id}")]
-        public IActionResult GetOrganization(int id)
+        public IActionResult GetMemberReferrerLevel(int id)
         {
             try
             {
-                return Ok(organizationService.GetOrganizationById(id));
+                return Ok(memberReferrerLevelService.GetMemberReferrerLevel(id));
             }
             catch
             {
@@ -48,7 +48,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         {
             try
             {
-                return Ok(organizationService.GetCount());
+                return Ok(memberReferrerLevelService.GetCount());
             }
             catch
             {
@@ -58,11 +58,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpDelete("{id}")]
-        public IActionResult DeleteBrand(int id)
+        public IActionResult DeleteLevel(int id)
         {
             try
             {
-                bool result = organizationService.DeleteOrganization(id);
+                bool result = memberReferrerLevelService.DeleteMemberReferrerLevel(id);
                 if (result)
                     return Ok("Successful");
                 return BadRequest("Failed");
@@ -75,11 +75,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpPut("{id}")]
-        public IActionResult UpdateBrand([FromBody] Organization organization, int id)
+        public IActionResult UpdateLevel([FromBody] MemberReferrerLevel memberReferrerLevel, int id)
         {
             try
             {
-                bool result = organizationService.UpdateOrganization(organization, id);
+                bool result = memberReferrerLevelService.UpdateMemberReferrerLevel(memberReferrerLevel, id);
                 if (result)
                     return Ok("Successful");
                 return BadRequest("Failed");
@@ -92,11 +92,11 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 
         [Produces("application/json")]
         [HttpPost("")]
-        public IActionResult AddBrand([FromBody] Organization organization)
+        public IActionResult AddLevel([FromBody] MemberReferrerLevel memberReferrerLevel)
         {
             try
             {
-                bool result = organizationService.AddOrganization(organization);
+                bool result = memberReferrerLevelService.AddMemberReferrerLevel(memberReferrerLevel);
                 if (result)
                     return Ok("Successful");
                 return BadRequest("Failed");

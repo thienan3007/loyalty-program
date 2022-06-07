@@ -22,9 +22,9 @@ namespace LoyaltyProgram.Services
             var brand = _databaseContext.Brands.FirstOrDefault(b => b.Id == id);
             if (brand != null)
             {
-                if (brand.Status == true)
+                if (brand.Status == 1)
                 {
-                    brand.Status = false;
+                    brand.Status = 0;
                     return _databaseContext.SaveChanges() > 0;
                 }
             }
@@ -36,7 +36,7 @@ namespace LoyaltyProgram.Services
             var brand = _databaseContext.Brands.FirstOrDefault(b => b.Id == id);
             if (brand != null)
             {
-                if (brand.Status == true)
+                if (brand.Status == 1)
                 {
                     return brand;
                 }
@@ -46,12 +46,12 @@ namespace LoyaltyProgram.Services
 
         public int GetBrandCount()
         {
-            return _databaseContext.Brands.Where(b => b.Status == true).Count();
+            return _databaseContext.Brands.Where(b => b.Status == 1).Count();
         }
 
         public List<Brand> GetBrands()
         {
-            return _databaseContext.Brands.Where(b => b.Status == true).ToList();
+            return _databaseContext.Brands.Where(b => b.Status == 1).ToList();
         }
 
         public bool UpdateBrand(Brand brand, int id)
@@ -59,7 +59,7 @@ namespace LoyaltyProgram.Services
             var brandDb = GetBrandById(id);
             if (brandDb != null)
             {
-                if (brandDb.Status == true)
+                if (brandDb.Status == 1)
                 {
                     //brandDb.Status = brand.Status;
                     //brandDb.Name = brand.Name;

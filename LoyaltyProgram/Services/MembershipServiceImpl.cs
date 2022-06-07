@@ -25,9 +25,9 @@ namespace LoyaltyProgram.Services
             var membership = databaseContext.Memberships.FirstOrDefault(m => m.AccountId == id);
             if (membership != null)
             {
-                if (membership.Status == true)
+                if (membership.Status == 1)
                 {
-                    membership.Status = false;
+                    membership.Status = 0;
                     return databaseContext.SaveChanges() > 0;
                 }
             }
@@ -36,7 +36,7 @@ namespace LoyaltyProgram.Services
 
         public int GetCount()
         {
-            return databaseContext.Memberships.Count();
+            return databaseContext.Memberships.Where(m => m.Status == 1).Count();
         }
 
         public Membership GetMembershipById(int id)
@@ -51,7 +51,7 @@ namespace LoyaltyProgram.Services
 
         public List<Membership> GetMemberships()
         {
-            return databaseContext.Memberships.Where(m => m.Status == true).ToList();
+            return databaseContext.Memberships.Where(m => m.Status == 1).ToList();
         }
 
         public bool UpdateMembership(Membership membership, int id)
@@ -61,7 +61,7 @@ namespace LoyaltyProgram.Services
             {
                 if (membershipDb != null)
                 {
-                    if (membershipDb.Status == true)
+                    if (membershipDb.Status == 1)
                     {
                         if (membership.MembershipEndDate != null)
                             membershipDb.MembershipEndDate = membership.MembershipEndDate;

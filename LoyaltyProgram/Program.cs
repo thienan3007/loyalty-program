@@ -44,6 +44,10 @@ builder.Services.AddScoped<LoyaltyProgramService, LoyaltyProgramServiceImpl>();
 builder.Services.AddScoped<CurrencyService, CurrencyServiceImpl>();
 builder.Services.AddScoped<MembershipService, MembershipServiceImpl>();
 builder.Services.AddScoped<TierService, TierServiceImpl>();
+builder.Services.AddScoped<MemberTierService, MemberTierServiceImpl>();
+builder.Services.AddScoped<VoucherDefinitionService, VoucherDefinitionServiceImpl>();
+builder.Services.AddScoped<MemberReferrerLevelService, MemberReferrerLevelServiceImpl>();
+builder.Services.AddScoped<MemberCurrencyService, MemberCurrencyServiceImpl>();
 
 var app = builder.Build();
 

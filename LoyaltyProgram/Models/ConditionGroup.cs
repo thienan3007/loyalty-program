@@ -15,7 +15,7 @@ namespace LoyaltyProgram.Models
         public int? ConditionRuleId { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdateDate { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public string? Description { get; set; }
 
         public virtual ConditionRule? ConditionRule { get; set; }

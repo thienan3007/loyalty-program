@@ -7,10 +7,9 @@ namespace LoyaltyProgram.Models
     {
         public Membership()
         {
+            Actions = new HashSet<Action>();
             MemberTiers = new HashSet<MemberTier>();
             MembershipCurrencies = new HashSet<MembershipCurrency>();
-            OrderAmountActionMembershipMappings = new HashSet<OrderAmountActionMembershipMapping>();
-            OrderItemActionMembershipMappings = new HashSet<OrderItemActionMembershipMapping>();
         }
 
         public int AccountId { get; set; }
@@ -22,13 +21,12 @@ namespace LoyaltyProgram.Models
         public string? MembershipCode { get; set; }
         public int? ReferrerMemberId { get; set; }
         public DateTime? ReferrerMemberDate { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         public string? Description { get; set; }
 
         public virtual Program? LoyaltyProgram { get; set; }
+        public virtual ICollection<Action> Actions { get; set; }
         public virtual ICollection<MemberTier> MemberTiers { get; set; }
         public virtual ICollection<MembershipCurrency> MembershipCurrencies { get; set; }
-        public virtual ICollection<OrderAmountActionMembershipMapping> OrderAmountActionMembershipMappings { get; set; }
-        public virtual ICollection<OrderItemActionMembershipMapping> OrderItemActionMembershipMappings { get; set; }
     }
 }
