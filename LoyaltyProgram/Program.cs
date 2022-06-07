@@ -48,6 +48,8 @@ builder.Services.AddScoped<MemberTierService, MemberTierServiceImpl>();
 builder.Services.AddScoped<VoucherDefinitionService, VoucherDefinitionServiceImpl>();
 builder.Services.AddScoped<MemberReferrerLevelService, MemberReferrerLevelServiceImpl>();
 builder.Services.AddScoped<MemberCurrencyService, MemberCurrencyServiceImpl>();
+builder.Services.AddScoped<ActionService, ActionServiceImpl>();
+builder.Services.AddScoped<EventSourceService, EventSourceServiceImpl >();
 
 var app = builder.Build();
 
