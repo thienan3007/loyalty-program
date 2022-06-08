@@ -56,23 +56,26 @@ namespace LoyaltyProgram.Services
 
         public bool UpdateCurency(Currency currency, int id)
         {
-            var currencyDb = GetCurrencyById(id);
-            if (currencyDb != null)
+            if (currency != null)
             {
-                if (currencyDb.Status == 1)
+                var currencyDb = GetCurrencyById(id);
+                if (currencyDb != null)
                 {
-                    if (currency.Name != null)
-                        currencyDb.Name = currency.Name;
-                    if (currency.Status != null)
-                        currencyDb.Status = currency.Status;
-                    if (currency.Description != null)
-                        currencyDb.Description = currency.Description;
-                    if (currency.NextResetDate != null)
-                        currencyDb.NextResetDate = currency.NextResetDate;
-                    if (currency.LoyaltyProgramId != null)
-                        currencyDb.LoyaltyProgramId = currency.LoyaltyProgramId;
+                    if (currencyDb.Status == 1)
+                    {
+                        if (currency.Name != null)
+                            currencyDb.Name = currency.Name;
+                        if (currency.Status != null)
+                            currencyDb.Status = currency.Status;
+                        if (currency.Description != null)
+                            currencyDb.Description = currency.Description;
+                        if (currency.NextResetDate != null)
+                            currencyDb.NextResetDate = currency.NextResetDate;
+                        if (currency.LoyaltyProgramId != null)
+                            currencyDb.LoyaltyProgramId = currency.LoyaltyProgramId;
 
-                    return _databaseContext.SaveChanges() > 0;
+                        return _databaseContext.SaveChanges() > 0;
+                    }
                 }
             }
 

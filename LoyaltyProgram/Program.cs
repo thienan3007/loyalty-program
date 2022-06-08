@@ -50,6 +50,13 @@ builder.Services.AddScoped<MemberReferrerLevelService, MemberReferrerLevelServic
 builder.Services.AddScoped<MemberCurrencyService, MemberCurrencyServiceImpl>();
 builder.Services.AddScoped<ActionService, ActionServiceImpl>();
 builder.Services.AddScoped<EventSourceService, EventSourceServiceImpl >();
+builder.Services.AddScoped<RewardService, RewardServiceImpl>();
+builder.Services.AddScoped<ConditionRuleService, ConditionRuleServiceImpl>();
+builder.Services.AddScoped<ConditionGroupService, ConditionGroupServiceImpl>();
+builder.Services.AddScoped<OrderAmountConditionService, OrderAmountConditionServiceImpl>();
+builder.Services.AddScoped<VoucherWalletService, VoucherWalletServiceImpl>();
+builder.Services.AddScoped<TransactionService, TransactionServiceImpl>();
+builder.Services.AddScoped<CardService, CardServiceImpl>();
 
 var app = builder.Build();
 

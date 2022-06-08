@@ -60,20 +60,23 @@ namespace LoyaltyProgram.Services
 
         public bool UpdateProgram(Models.Program program, int id)
         {
-            var programDb = databaseContext.Programs.FirstOrDefault(o => o.Id == id);
-
-            if (programDb != null)
+            if (program != null)
             {
-                if (programDb.Status == 1)
-                {
-                    if (program.Name != null)
-                        programDb.Name = program.Name;
-                    if (program.Status != null)
-                        programDb.Status = program.Status;
-                    if (program.Description != null)
-                        programDb.Description = program.Description;
+                var programDb = databaseContext.Programs.FirstOrDefault(o => o.Id == id);
 
-                    return databaseContext.SaveChanges() > 0;
+                if (programDb != null)
+                {
+                    if (programDb.Status == 1)
+                    {
+                        if (program.Name != null)
+                            programDb.Name = program.Name;
+                        if (program.Status != null)
+                            programDb.Status = program.Status;
+                        if (program.Description != null)
+                            programDb.Description = program.Description;
+
+                        return databaseContext.SaveChanges() > 0;
+                    }
                 }
             }
 

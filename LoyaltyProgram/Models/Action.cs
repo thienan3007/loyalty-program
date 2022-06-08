@@ -16,12 +16,12 @@ namespace LoyaltyProgram.Models
         public int? LoyaltyProgramId { get; set; }
         public int? OrderId { get; set; }
         public int? MembershipId { get; set; }
-        public int? RewardId { get; set; }
         public int? MembershipRewardId { get; set; }
         public int? ReferrerRewardId { get; set; }
 
         public virtual Program? LoyaltyProgram { get; set; }
         public virtual Membership? Membership { get; set; }
-        public virtual Reward? Reward { get; set; }
+        public virtual Reward? MembershipReward { get; set; }
+        public virtual Reward? ReferrerReward { get; set; }
     }
 }

@@ -7,6 +7,7 @@ namespace LoyaltyProgram.Models
     {
         public Currency()
         {
+            Cards = new HashSet<Card>();
             MembershipCurrencies = new HashSet<MembershipCurrency>();
         }
 
@@ -18,6 +19,7 @@ namespace LoyaltyProgram.Models
         public int? LoyaltyProgramId { get; set; }
 
         public virtual Program? LoyaltyProgram { get; set; }
+        public virtual ICollection<Card> Cards { get; set; }
         public virtual ICollection<MembershipCurrency> MembershipCurrencies { get; set; }
     }
 }

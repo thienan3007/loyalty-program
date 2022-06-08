@@ -56,26 +56,24 @@ namespace LoyaltyProgram.Services
 
         public bool UpdateBrand(Brand brand, int id)
         {
-            var brandDb = GetBrandById(id);
-            if (brandDb != null)
+            if (brand != null)
             {
-                if (brandDb.Status == 1)
+                var brandDb = GetBrandById(id);
+                if (brandDb != null)
                 {
-                    //brandDb.Status = brand.Status;
-                    //brandDb.Name = brand.Name;
-                    //brandDb.Description = brand.Description;
-                    //brandDb.OrganizationId = brand.OrganizationId;
+                    if (brandDb.Status == 1)
+                    {
+                        if (brand.Name != null)
+                            brandDb.Name = brand.Name;
+                        if (brand.Status != null)
+                            brandDb.Status = brand.Status;
+                        if (brand.Description != null)
+                            brandDb.Description = brand.Description;
+                        if (brand.OrganizationId != null)
+                            brandDb.OrganizationId = brand.OrganizationId;
 
-                    if (brand.Name != null)
-                        brandDb.Name = brand.Name;
-                    if (brand.Status != null)
-                        brandDb.Status = brand.Status;
-                    if (brand.Description != null)
-                        brandDb.Description = brand.Description;
-                    if (brand.OrganizationId != null)
-                        brandDb.OrganizationId = brand.OrganizationId;
-
-                    return _databaseContext.SaveChanges() > 0;
+                        return _databaseContext.SaveChanges() > 0;
+                    }
                 }
             }
 

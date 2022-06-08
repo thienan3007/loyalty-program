@@ -5,11 +5,6 @@ namespace LoyaltyProgram.Models
 {
     public partial class MembershipCurrency
     {
-        public MembershipCurrency()
-        {
-            Transactions = new HashSet<Transaction>();
-        }
-
         public int Id { get; set; }
         public string? Name { get; set; }
         public double? PointsBalance { get; set; }
@@ -26,6 +21,5 @@ namespace LoyaltyProgram.Models
 
         public virtual Currency? Currency { get; set; }
         public virtual Membership? Membership { get; set; }
-        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

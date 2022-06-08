@@ -7,7 +7,8 @@ namespace LoyaltyProgram.Models
     {
         public Reward()
         {
-            Actions = new HashSet<Action>();
+            ActionMembershipRewards = new HashSet<Action>();
+            ActionReferrerRewards = new HashSet<Action>();
         }
 
         public int Id { get; set; }
@@ -23,6 +24,7 @@ namespace LoyaltyProgram.Models
         public int? LoyaltyProgramId { get; set; }
 
         public virtual Program? LoyaltyProgram { get; set; }
-        public virtual ICollection<Action> Actions { get; set; }
+        public virtual ICollection<Action> ActionMembershipRewards { get; set; }
+        public virtual ICollection<Action> ActionReferrerRewards { get; set; }
     }
 }

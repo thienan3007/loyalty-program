@@ -59,27 +59,30 @@ namespace LoyaltyProgram.Services
 
         public bool UpdateTier(Tier tier, int id)
         {
-            var tierDB = databaseContext.Tiers.FirstOrDefault(t => t.Id == id);
-            if (tierDB != null)
+            if (tier != null)
             {
-                if (tierDB.Status == 1)
+                var tierDB = databaseContext.Tiers.FirstOrDefault(t => t.Id == id);
+                if (tierDB != null)
                 {
-                    if (tier.Name != null)
-                        tierDB.Name = tier.Name;
-                    if (tier.Status != null)
-                        tierDB.Status = tier.Status;
-                    if (tier.LoyaltyProgramId != null)
-                        tierDB.LoyaltyProgramId = tier.LoyaltyProgramId;
-                    if (tierDB.SequenceNumber != null)
-                        tierDB.SequenceNumber = tier.SequenceNumber;
-                    if (tier.MinPoints != null)
-                        tierDB.MinPoints = tier.MinPoints;
-                    if (tier.RatioPoints != null)
-                        tierDB.RatioPoints = tier.RatioPoints;
-                    if (tier.Description != null)
-                        tierDB.Description = tier.Description;
+                    if (tierDB.Status == 1)
+                    {
+                        if (tier.Name != null)
+                            tierDB.Name = tier.Name;
+                        if (tier.Status != null)
+                            tierDB.Status = tier.Status;
+                        if (tier.LoyaltyProgramId != null)
+                            tierDB.LoyaltyProgramId = tier.LoyaltyProgramId;
+                        if (tierDB.SequenceNumber != null)
+                            tierDB.SequenceNumber = tier.SequenceNumber;
+                        if (tier.MinPoints != null)
+                            tierDB.MinPoints = tier.MinPoints;
+                        if (tier.RatioPoints != null)
+                            tierDB.RatioPoints = tier.RatioPoints;
+                        if (tier.Description != null)
+                            tierDB.Description = tier.Description;
 
-                    return databaseContext.SaveChanges() > 0;
+                        return databaseContext.SaveChanges() > 0;
+                    }
                 }
             }
 

@@ -66,25 +66,28 @@ namespace LoyaltyProgram.Services
 
         public bool UpdateMemberTier(MemberTier memberTier, int loyaltyMemberId, int loyaltyTierId)
         {
-            var memberTierDb = databaseContext.MemberTiers.FirstOrDefault(m => (m.LoyaltyMemberId == loyaltyMemberId && m.LoyaltyTierId == loyaltyTierId));
-            if (memberTierDb != null)
+            if (memberTier != null)
             {
-                if (memberTierDb.Status == 1)
+                var memberTierDb = databaseContext.MemberTiers.FirstOrDefault(m => (m.LoyaltyMemberId == loyaltyMemberId && m.LoyaltyTierId == loyaltyTierId));
+                if (memberTierDb != null)
                 {
-                    if (memberTier.Name != null)
-                        memberTierDb.Name = memberTier.Name;
-                    if (memberTier.EffectiveDate != null)
-                        memberTierDb.EffectiveDate = memberTier.EffectiveDate;
-                    if (memberTier.ExpirationDate != null)
-                        memberTierDb.ExpirationDate = memberTier.ExpirationDate;
-                    if (memberTier.UdpateTierDate != null)
-                        memberTierDb.UdpateTierDate = memberTierDb.UdpateTierDate;
-                    if (memberTier.Status != null)
-                        memberTierDb.Status = memberTier.Status;
-                    if (memberTier.Description != null)
-                        memberTierDb.Description = memberTier.Description;
+                    if (memberTierDb.Status == 1)
+                    {
+                        if (memberTier.Name != null)
+                            memberTierDb.Name = memberTier.Name;
+                        if (memberTier.EffectiveDate != null)
+                            memberTierDb.EffectiveDate = memberTier.EffectiveDate;
+                        if (memberTier.ExpirationDate != null)
+                            memberTierDb.ExpirationDate = memberTier.ExpirationDate;
+                        if (memberTier.UdpateTierDate != null)
+                            memberTierDb.UdpateTierDate = memberTierDb.UdpateTierDate;
+                        if (memberTier.Status != null)
+                            memberTierDb.Status = memberTier.Status;
+                        if (memberTier.Description != null)
+                            memberTierDb.Description = memberTier.Description;
 
-                    return databaseContext.SaveChanges() > 0;
+                        return databaseContext.SaveChanges() > 0;
+                    }
                 }
             }
             return false;

@@ -18,6 +18,7 @@ namespace LoyaltyProgram.Models
 
         public virtual DbSet<Action> Actions { get; set; } = null!;
         public virtual DbSet<Brand> Brands { get; set; } = null!;
+        public virtual DbSet<Card> Cards { get; set; } = null!;
         public virtual DbSet<ConditionGroup> ConditionGroups { get; set; } = null!;
         public virtual DbSet<ConditionRule> ConditionRules { get; set; } = null!;
         public virtual DbSet<Currency> Currencies { get; set; } = null!;
@@ -41,7 +42,7 @@ namespace LoyaltyProgram.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=tcp:loyaltyprogram.database.windows.net,1433;Initial Catalog=Loyalty;Persist Security Info=False;User ID=azureuser;Password=Loyalty@Program;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
+                optionsBuilder.UseSqlServer("Server=tcp:loyaltyprogram.database.windows.net,1433;Initial Catalog=Loyalty;Persist Security Info=False;User ID=azureuser;Password=Loyalty@Program;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30");
             }
         }
 
@@ -75,8 +76,6 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.ReferrerRewardId).HasColumnName("referrer_reward_id");
 
-                entity.Property(e => e.RewardId).HasColumnName("reward_id");
-
                 entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.Property(e => e.Type)
@@ -93,10 +92,15 @@ namespace LoyaltyProgram.Models
                     .HasForeignKey(d => d.MembershipId)
                     .HasConstraintName("FK_Action_Membership");
 
-                entity.HasOne(d => d.Reward)
-                    .WithMany(p => p.Actions)
-                    .HasForeignKey(d => d.RewardId)
-                    .HasConstraintName("FK_Action_Reward");
+                entity.HasOne(d => d.MembershipReward)
+                    .WithMany(p => p.ActionMembershipRewards)
+                    .HasForeignKey(d => d.MembershipRewardId)
+                    .HasConstraintName("FK_Action_Reward_Membership");
+
+                entity.HasOne(d => d.ReferrerReward)
+                    .WithMany(p => p.ActionReferrerRewards)
+                    .HasForeignKey(d => d.ReferrerRewardId)
+                    .HasConstraintName("FK_Action_Reward_Referrer");
             });
 
             modelBuilder.Entity<Brand>(entity =>
@@ -121,6 +125,54 @@ namespace LoyaltyProgram.Models
                     .WithMany(p => p.Brands)
                     .HasForeignKey(d => d.OrganizationId)
                     .HasConstraintName("FK_Brand_Organization");
+            });
+
+            modelBuilder.Entity<Card>(entity =>
+            {
+                entity.ToTable("Card");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Amount).HasColumnName("amount");
+
+                entity.Property(e => e.BrandId).HasColumnName("brand_id");
+
+                entity.Property(e => e.CardholderName)
+                    .HasMaxLength(200)
+                    .HasColumnName("cardholder_name");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("date")
+                    .HasColumnName("created_at");
+
+                entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+
+                entity.Property(e => e.Description).HasColumnName("description");
+
+                entity.Property(e => e.Discount).HasColumnName("discount");
+
+                entity.Property(e => e.MembershipId).HasColumnName("membership_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(200)
+                    .HasColumnName("type");
+
+                entity.HasOne(d => d.Brand)
+                    .WithMany(p => p.Cards)
+                    .HasForeignKey(d => d.BrandId)
+                    .HasConstraintName("FK_Card_Brand");
+
+                entity.HasOne(d => d.Currency)
+                    .WithMany(p => p.Cards)
+                    .HasForeignKey(d => d.CurrencyId)
+                    .HasConstraintName("FK_Card_Currency");
+
+                entity.HasOne(d => d.Membership)
+                    .WithMany(p => p.Cards)
+                    .HasForeignKey(d => d.MembershipId)
+                    .HasConstraintName("FK_Card_Membership");
             });
 
             modelBuilder.Entity<ConditionGroup>(entity =>
@@ -415,8 +467,6 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.NextOrderTotalAmountAfterDiscount).HasColumnName("nextOrderTotalAmountAfterDiscount");
 
-                entity.Property(e => e.OrderTotalAmount).HasColumnName("orderTotalAmount");
-
                 entity.Property(e => e.OrderTotalAmountAfterDiscount).HasColumnName("orderTotalAmountAfterDiscount");
 
                 entity.Property(e => e.OrderTotalAmountAfterDiscountGainPoint).HasColumnName("orderTotalAmountAfterDiscountGainPoint");
@@ -446,6 +496,8 @@ namespace LoyaltyProgram.Models
                     .HasColumnName("description");
 
                 entity.Property(e => e.NextQuantity).HasColumnName("nextQuantity");
+
+                entity.Property(e => e.ProductId).HasColumnName("product_id");
 
                 entity.Property(e => e.Quantity).HasColumnName("quantity");
 
@@ -576,32 +628,33 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.CardId).HasColumnName("card_id");
+
                 entity.Property(e => e.Description)
                     .HasColumnType("text")
                     .HasColumnName("description");
-
-                entity.Property(e => e.MemberCurrencyId).HasColumnName("memberCurrencyId");
 
                 entity.Property(e => e.MembershipId).HasColumnName("membershipID");
 
                 entity.Property(e => e.OrderId).HasColumnName("orderId");
 
-                entity.Property(e => e.Points).HasColumnName("points");
-
-                entity.Property(e => e.ReferrerId).HasColumnName("referrerId");
-
-                entity.Property(e => e.ReferrerPoints).HasColumnName("referrerPoints");
-
                 entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.TotalPrice).HasColumnName("total_price");
 
                 entity.Property(e => e.TransactionDate)
                     .HasColumnType("date")
                     .HasColumnName("transactionDate");
 
-                entity.HasOne(d => d.MemberCurrency)
+                entity.HasOne(d => d.Card)
                     .WithMany(p => p.Transactions)
-                    .HasForeignKey(d => d.MemberCurrencyId)
-                    .HasConstraintName("FK_Transaction_MembershipCurrency");
+                    .HasForeignKey(d => d.CardId)
+                    .HasConstraintName("FK_Transaction_Card");
+
+                entity.HasOne(d => d.Membership)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.MembershipId)
+                    .HasConstraintName("FK_Transaction_Membership");
             });
 
             modelBuilder.Entity<VoucherDefinition>(entity =>
@@ -670,6 +723,18 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.UseDate)
                     .HasColumnType("date")
                     .HasColumnName("useDate");
+
+                entity.HasOne(d => d.Membership)
+                    .WithMany(p => p.VoucherWallets)
+                    .HasForeignKey(d => d.MembershipId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_VoucherWallet_Membership");
+
+                entity.HasOne(d => d.VoucherDefinition)
+                    .WithMany(p => p.VoucherWallets)
+                    .HasForeignKey(d => d.VoucherDefinitionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_VoucherWallet_VoucherDefinition");
             });
 
             modelBuilder.HasSequence<int>("SalesOrderNumber", "SalesLT");

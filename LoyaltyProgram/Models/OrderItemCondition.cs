@@ -13,6 +13,7 @@ namespace LoyaltyProgram.Models
         public double? QuantityGainPoint { get; set; }
         public int? Status { get; set; }
         public string? Description { get; set; }
+        public int? ProductId { get; set; }
 
         public virtual ConditionGroup? ConditionGroup { get; set; }
     }

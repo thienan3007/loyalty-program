@@ -7,6 +7,7 @@ namespace LoyaltyProgram.Models
     {
         public Brand()
         {
+            Cards = new HashSet<Card>();
             Programs = new HashSet<Program>();
         }
 
@@ -17,6 +18,7 @@ namespace LoyaltyProgram.Models
         public int? Status { get; set; }
 
         public virtual Organization? Organization { get; set; }
+        public virtual ICollection<Card> Cards { get; set; }
         public virtual ICollection<Program> Programs { get; set; }
     }
 }

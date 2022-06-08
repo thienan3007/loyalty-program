@@ -5,6 +5,11 @@ namespace LoyaltyProgram.Models
 {
     public partial class VoucherDefinition
     {
+        public VoucherDefinition()
+        {
+            VoucherWallets = new HashSet<VoucherWallet>();
+        }
+
         public int Id { get; set; }
         public string? Name { get; set; }
         public double? DiscountValue { get; set; }
@@ -16,5 +21,7 @@ namespace LoyaltyProgram.Models
         public int? ExpirationPeriod { get; set; }
         public string? ExpirationPeriodUnits { get; set; }
         public bool? IsPartialRedeemable { get; set; }
+
+        public virtual ICollection<VoucherWallet> VoucherWallets { get; set; }
     }
 }

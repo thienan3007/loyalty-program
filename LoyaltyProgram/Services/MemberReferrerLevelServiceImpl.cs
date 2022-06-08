@@ -40,7 +40,7 @@ namespace LoyaltyProgram.Services
                 {
                     return memberReferrerLevel;
                 }
-            } 
+            }
             return null;
         }
 
@@ -56,21 +56,24 @@ namespace LoyaltyProgram.Services
 
         public bool UpdateMemberReferrerLevel(MemberReferrerLevel memberReferrerLevel, int id)
         {
-            var memberReferrerLevelDb = GetMemberReferrerLevel(id);
-            if (memberReferrerLevelDb != null)
+            if (memberReferrerLevel != null)
             {
-                if (memberReferrerLevelDb.Status == 1)
+                var memberReferrerLevelDb = GetMemberReferrerLevel(id);
+                if (memberReferrerLevelDb != null)
                 {
-                    if (memberReferrerLevel.TierSequenceNumber != null)
-                        memberReferrerLevelDb.TierSequenceNumber = memberReferrerLevel.TierSequenceNumber;
-                    if (memberReferrerLevel.RatioReferrerPoints != null)
-                        memberReferrerLevelDb.RatioReferrerPoints = memberReferrerLevel.RatioReferrerPoints;
-                    if (memberReferrerLevel.Status != null)
-                        memberReferrerLevelDb.Status = memberReferrerLevel.Status;
-                    if (memberReferrerLevel.Description != null)
-                        memberReferrerLevelDb.Description = memberReferrerLevel.Description;
+                    if (memberReferrerLevelDb.Status == 1)
+                    {
+                        if (memberReferrerLevel.TierSequenceNumber != null)
+                            memberReferrerLevelDb.TierSequenceNumber = memberReferrerLevel.TierSequenceNumber;
+                        if (memberReferrerLevel.RatioReferrerPoints != null)
+                            memberReferrerLevelDb.RatioReferrerPoints = memberReferrerLevel.RatioReferrerPoints;
+                        if (memberReferrerLevel.Status != null)
+                            memberReferrerLevelDb.Status = memberReferrerLevel.Status;
+                        if (memberReferrerLevel.Description != null)
+                            memberReferrerLevelDb.Description = memberReferrerLevel.Description;
 
-                    return _databaseContext.SaveChanges() > 0;
+                        return _databaseContext.SaveChanges() > 0;
+                    }
                 }
             }
 

@@ -8,8 +8,11 @@ namespace LoyaltyProgram.Models
         public Membership()
         {
             Actions = new HashSet<Action>();
+            Cards = new HashSet<Card>();
             MemberTiers = new HashSet<MemberTier>();
             MembershipCurrencies = new HashSet<MembershipCurrency>();
+            Transactions = new HashSet<Transaction>();
+            VoucherWallets = new HashSet<VoucherWallet>();
         }
 
         public int AccountId { get; set; }
@@ -26,7 +29,10 @@ namespace LoyaltyProgram.Models
 
         public virtual Program? LoyaltyProgram { get; set; }
         public virtual ICollection<Action> Actions { get; set; }
+        public virtual ICollection<Card> Cards { get; set; }
         public virtual ICollection<MemberTier> MemberTiers { get; set; }
         public virtual ICollection<MembershipCurrency> MembershipCurrencies { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<VoucherWallet> VoucherWallets { get; set; }
     }
 }

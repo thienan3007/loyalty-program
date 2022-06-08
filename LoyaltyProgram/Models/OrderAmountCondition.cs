@@ -7,7 +7,6 @@ namespace LoyaltyProgram.Models
     {
         public int Id { get; set; }
         public int? ConditionGroupId { get; set; }
-        public double? OrderTotalAmount { get; set; }
         public double? MinOrderAmount { get; set; }
         public double? NextOrderTotalAmount { get; set; }
         public double? OrderTotalAmountGainPoint { get; set; }

@@ -60,20 +60,23 @@ namespace LoyaltyProgram.Services
 
         public bool UpdateOrganization(Organization organization, int id)
         {
-            var organizationDb = databaseContext.Organizations.FirstOrDefault(o => o.Id == id);
-
-            if (organizationDb != null)
+            if (organization != null)
             {
-                if (organizationDb.Status == 1)
-                {
-                    if (organization.Name != null)
-                        organizationDb.Name = organization.Name;
-                    if (organization.Status != null)
-                        organizationDb.Status = organization.Status;
-                    if (organization.Description != null)
-                        organizationDb.Description = organization.Description;
+                var organizationDb = databaseContext.Organizations.FirstOrDefault(o => o.Id == id);
 
-                    return databaseContext.SaveChanges() > 0;
+                if (organizationDb != null)
+                {
+                    if (organizationDb.Status == 1)
+                    {
+                        if (organization.Name != null)
+                            organizationDb.Name = organization.Name;
+                        if (organization.Status != null)
+                            organizationDb.Status = organization.Status;
+                        if (organization.Description != null)
+                            organizationDb.Description = organization.Description;
+
+                        return databaseContext.SaveChanges() > 0;
+                    }
                 }
             }
 

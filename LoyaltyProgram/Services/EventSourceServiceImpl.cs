@@ -56,19 +56,22 @@ namespace LoyaltyProgram.Services
 
         public bool UpdateEventSource(EventSource eventSource, int id)
         {
-            var eventSourceDb = GetEventSource(id);
-            if (eventSourceDb != null)
+           if (eventSource != null)
             {
-                if (eventSourceDb.Status == 1)
+                var eventSourceDb = GetEventSource(id);
+                if (eventSourceDb != null)
                 {
-                    if (eventSource.Name != null)
-                        eventSourceDb.Name = eventSource.Name;
-                    if (eventSource.Status != null)
-                        eventSourceDb.Status = eventSource.Status;
-                    if (eventSource.Description != null)
-                        eventSourceDb.Description = eventSource.Description;
+                    if (eventSourceDb.Status == 1)
+                    {
+                        if (eventSource.Name != null)
+                            eventSourceDb.Name = eventSource.Name;
+                        if (eventSource.Status != null)
+                            eventSourceDb.Status = eventSource.Status;
+                        if (eventSource.Description != null)
+                            eventSourceDb.Description = eventSource.Description;
 
-                    return _databaseContext.SaveChanges() > 0;
+                        return _databaseContext.SaveChanges() > 0;
+                    }
                 }
             }
 

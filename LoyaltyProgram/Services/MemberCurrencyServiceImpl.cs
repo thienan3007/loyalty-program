@@ -40,7 +40,7 @@ namespace LoyaltyProgram.Services
                 {
                     return membershipCurrency;
                 }
-            } 
+            }
             return null;
         }
 
@@ -56,37 +56,40 @@ namespace LoyaltyProgram.Services
 
         public bool UpdateMembershipCurrency(MembershipCurrency membershipCurrency, int id)
         {
-            var membershipCurrencyDb = GetMembershipCurrency(id);
-            if (membershipCurrencyDb != null)
+            if (membershipCurrency != null)
             {
-                if (membershipCurrencyDb.Status == 1)
+                var membershipCurrencyDb = GetMembershipCurrency(id);
+                if (membershipCurrencyDb != null)
                 {
-                    if (membershipCurrency.Name != null)
-                        membershipCurrencyDb.Name = membershipCurrency.Name;
-                    if (membershipCurrency.PointsBalance != null)
-                        membershipCurrencyDb.PointsBalance = membershipCurrency.PointsBalance;
-                    if (membershipCurrency.TotalPointsAccrued != null)
-                        membershipCurrencyDb.TotalPointsAccrued = membershipCurrency.TotalPointsAccrued;
-                    if (membershipCurrency.TotalPointsExpired != null)
-                        membershipCurrencyDb.TotalPointsExpired = membershipCurrency.TotalPointsExpired;
-                    if (membershipCurrency.TotalPointsRedeemed != null)
-                        membershipCurrencyDb.TotalPointsRedeemed = membershipCurrency.TotalPointsRedeemed;
-                    if (membershipCurrency.BalanceBeforeReset != null)
-                        membershipCurrencyDb.BalanceBeforeReset = membershipCurrency.BalanceBeforeReset;
-                    if (membershipCurrency.LastResetDate != null)
-                        membershipCurrencyDb.LastResetDate = membershipCurrency.LastResetDate;
-                    if (membershipCurrency.MembershipId != null)
-                        membershipCurrencyDb.MembershipId = membershipCurrency.MembershipId;
-                    if (membershipCurrency.ExpirationPoints != null)
-                        membershipCurrencyDb.ExpirationPoints = membershipCurrency.ExpirationPoints;
-                    if (membershipCurrency.CurrencyId != null)
-                        membershipCurrencyDb.CurrencyId = membershipCurrencyDb.CurrencyId;
-                    if (membershipCurrency.Status != null)
-                        membershipCurrencyDb.Status = membershipCurrency.Status;
-                    if (membershipCurrency.Description != null)
-                        membershipCurrencyDb.Description = membershipCurrency.Description;
+                    if (membershipCurrencyDb.Status == 1)
+                    {
+                        if (membershipCurrency.Name != null)
+                            membershipCurrencyDb.Name = membershipCurrency.Name;
+                        if (membershipCurrency.PointsBalance != null)
+                            membershipCurrencyDb.PointsBalance = membershipCurrency.PointsBalance;
+                        if (membershipCurrency.TotalPointsAccrued != null)
+                            membershipCurrencyDb.TotalPointsAccrued = membershipCurrency.TotalPointsAccrued;
+                        if (membershipCurrency.TotalPointsExpired != null)
+                            membershipCurrencyDb.TotalPointsExpired = membershipCurrency.TotalPointsExpired;
+                        if (membershipCurrency.TotalPointsRedeemed != null)
+                            membershipCurrencyDb.TotalPointsRedeemed = membershipCurrency.TotalPointsRedeemed;
+                        if (membershipCurrency.BalanceBeforeReset != null)
+                            membershipCurrencyDb.BalanceBeforeReset = membershipCurrency.BalanceBeforeReset;
+                        if (membershipCurrency.LastResetDate != null)
+                            membershipCurrencyDb.LastResetDate = membershipCurrency.LastResetDate;
+                        if (membershipCurrency.MembershipId != null)
+                            membershipCurrencyDb.MembershipId = membershipCurrency.MembershipId;
+                        if (membershipCurrency.ExpirationPoints != null)
+                            membershipCurrencyDb.ExpirationPoints = membershipCurrency.ExpirationPoints;
+                        if (membershipCurrency.CurrencyId != null)
+                            membershipCurrencyDb.CurrencyId = membershipCurrencyDb.CurrencyId;
+                        if (membershipCurrency.Status != null)
+                            membershipCurrencyDb.Status = membershipCurrency.Status;
+                        if (membershipCurrency.Description != null)
+                            membershipCurrencyDb.Description = membershipCurrency.Description;
 
-                    return _databaseContext.SaveChanges() > 0;
+                        return _databaseContext.SaveChanges() > 0;
+                    }
                 }
             }
 

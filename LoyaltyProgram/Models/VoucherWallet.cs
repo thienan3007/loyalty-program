@@ -13,5 +13,8 @@ namespace LoyaltyProgram.Models
         public double? RedeemedValue { get; set; }
         public double? RemainingValue { get; set; }
         public string? Description { get; set; }
+
+        public virtual Membership Membership { get; set; } = null!;
+        public virtual VoucherDefinition VoucherDefinition { get; set; } = null!;
     }
 }
