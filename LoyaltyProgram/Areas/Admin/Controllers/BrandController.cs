@@ -6,6 +6,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 {
     [Route("api/v{version:apiVersion}/brands")]
     [ApiVersion("1.0")]
+    [ApiController]
     public class BrandController : Controller
     {
         private BrandService brandService;
@@ -14,6 +15,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             this.brandService = brandService;
         }
 
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
         public IActionResult FindAll()
@@ -27,7 +29,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("{id}")]
         public IActionResult GetBrand(int id)
@@ -41,7 +43,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("count")]
         public IActionResult GetCoount()
@@ -55,7 +57,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpDelete("{id}")]
         public IActionResult DeleteBrand(int id)
@@ -72,7 +74,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPut("{id}")]
         public IActionResult UpdateBrand([FromBody] Brand brand, int id)
@@ -89,7 +91,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPost("")]
         public IActionResult AddBrand([FromBody] Brand brand)

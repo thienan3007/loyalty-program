@@ -6,6 +6,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 {
     [Route("api/v{version:apiVersion}/condition-groups")]
     [ApiVersion("1.0")]
+    [ApiController]
     public class ConditionGroupController : Controller
     {
         private ConditionGroupService conditionGroupService;
@@ -13,7 +14,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         {
             this.conditionGroupService = conditionGroupService; 
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
         public IActionResult FindAll()
@@ -27,7 +28,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("{id}")]
         public IActionResult Get(int id)
@@ -41,7 +42,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("count")]
         public IActionResult GetCount()
@@ -55,7 +56,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
@@ -72,7 +73,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPut("{id}")]
         public IActionResult Update([FromBody] ConditionGroup conditionGroup, int id)
@@ -89,7 +90,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPost("")]
         public IActionResult Add([FromBody] ConditionGroup conditionGroup)

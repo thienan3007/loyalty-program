@@ -6,6 +6,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 {
     [Route("api/v{version:apiVersion}/member-referrer-levels")]
     [ApiVersion("1.0")]
+    [ApiController]
     public class MemberReferrerLevelController : Controller
     {
         private MemberReferrerLevelService memberReferrerLevelService;
@@ -13,7 +14,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         {
             this.memberReferrerLevelService = memberReferrerLevelService;
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
         public IActionResult FindAll()
@@ -27,7 +28,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("{id}")]
         public IActionResult GetMemberReferrerLevel(int id)
@@ -41,7 +42,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("count")]
         public IActionResult GetCount()
@@ -55,7 +56,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpDelete("{id}")]
         public IActionResult DeleteLevel(int id)
@@ -72,7 +73,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPut("{id}")]
         public IActionResult UpdateLevel([FromBody] MemberReferrerLevel memberReferrerLevel, int id)
@@ -89,7 +90,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
                 return BadRequest();
             }
         }
-
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPost("")]
         public IActionResult AddLevel([FromBody] MemberReferrerLevel memberReferrerLevel)

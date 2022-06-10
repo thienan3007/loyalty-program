@@ -6,6 +6,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
 {
     [Route("api/v{version:apiVersion}/actions")]
     [ApiVersion("1.0")]
+    [ApiController]
     public class ActionController : Controller
     {
         private ActionService actionService;
@@ -14,6 +15,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             this.actionService = actionService;
         }
 
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
         public IActionResult FindAll()
@@ -28,6 +30,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             }
         }
 
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("{id}")]
         public IActionResult GetAction(int id)
@@ -42,6 +45,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             }
         }
 
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("count")]
         public IActionResult GetCount()
@@ -56,6 +60,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             }
         }
 
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpDelete("{id}")]
         public IActionResult DeleteAction(int id)
@@ -73,6 +78,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             }
         }
 
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPut("{id}")]
         public IActionResult UpdateAction([FromBody] Models.Action action, int id)
@@ -90,6 +96,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
             }
         }
 
+        [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPost("")]
         public IActionResult Add([FromBody] Models.Action action)
