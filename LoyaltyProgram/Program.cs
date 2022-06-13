@@ -1,17 +1,50 @@
 using LoyaltyProgram.Areas.Admin;
+using LoyaltyProgram.Auth;
 using LoyaltyProgram.Models;
 using LoyaltyProgram.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionStrings = builder.Configuration["ConnectionStrings:DefaultConnection"];
+ConfigurationManager configuration = builder.Configuration;
+var connectionStrings = configuration["ConnectionStrings:DefaultConnection"];
 builder.Services.AddDbContext<DatabaseContext>(option => option.UseSqlServer(connectionStrings));
 
 //builder.Services.AddDbContext<DatabaseContext>(option => option.UseLazyLoadingProxies().UseSqlServer(connectionStrings));
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+
+.AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true, 
+        ValidateIssuerSigningKey = true, 
+        ClockSkew = TimeSpan.Zero,
+
+        ValidAudience = configuration["JWT:ValidAudience"],
+        ValidIssuer = configuration["JWT:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+    };
+});
+
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -67,6 +100,7 @@ builder.Services.AddScoped<OrderAmountConditionService, OrderAmountConditionServ
 builder.Services.AddScoped<VoucherWalletService, VoucherWalletServiceImpl>();
 builder.Services.AddScoped<TransactionService, TransactionServiceImpl>();
 builder.Services.AddScoped<CardService, CardServiceImpl>();
+builder.Services.AddScoped<AuthService, AuthServiceImpl>();
 
 var app = builder.Build();
 
@@ -100,9 +134,10 @@ app.UseSwaggerUI(options =>
     }
 });
 
-// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-// specifying the Swagger JSON endpoint.
+app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

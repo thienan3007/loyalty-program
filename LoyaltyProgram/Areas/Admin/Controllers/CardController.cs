@@ -1,9 +1,11 @@
 ﻿using LoyaltyProgram.Models;
 using LoyaltyProgram.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
+    [Authorize]
     [Route("api/v{version:apiVersion}/cards")]
     [ApiVersion("1.0")]
     [ApiController]

@@ -26,6 +26,9 @@ namespace LoyaltyProgram.Models
         public DateTime? ReferrerMemberDate { get; set; }
         public int? Status { get; set; }
         public string? Description { get; set; }
+        public string? Email { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
 
         public virtual Program? LoyaltyProgram { get; set; }
         public virtual ICollection<Action> Actions { get; set; }

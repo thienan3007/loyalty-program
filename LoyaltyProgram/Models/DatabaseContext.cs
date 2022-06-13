@@ -17,6 +17,7 @@ namespace LoyaltyProgram.Models
         }
 
         public virtual DbSet<Action> Actions { get; set; } = null!;
+        public virtual DbSet<Admin> Admins { get; set; } = null!;
         public virtual DbSet<Brand> Brands { get; set; } = null!;
         public virtual DbSet<Card> Cards { get; set; } = null!;
         public virtual DbSet<ConditionGroup> ConditionGroups { get; set; } = null!;
@@ -101,6 +102,18 @@ namespace LoyaltyProgram.Models
                     .WithMany(p => p.ActionReferrerRewards)
                     .HasForeignKey(d => d.ReferrerRewardId)
                     .HasConstraintName("FK_Action_Reward_Referrer");
+            });
+
+            modelBuilder.Entity<Admin>(entity =>
+            {
+                entity.HasKey(e => e.Email)
+                    .HasName("PK__Admin__AB6E6165E6F7282F");
+
+                entity.ToTable("Admin");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(200)
+                    .HasColumnName("email");
             });
 
             modelBuilder.Entity<Brand>(entity =>
@@ -370,6 +383,10 @@ namespace LoyaltyProgram.Models
                     .HasColumnType("text")
                     .HasColumnName("description");
 
+                entity.Property(e => e.Email)
+                    .HasMaxLength(200)
+                    .HasColumnName("email");
+
                 entity.Property(e => e.EnrollmenDate)
                     .HasColumnType("date")
                     .HasColumnName("enrollmenDate");
@@ -393,6 +410,8 @@ namespace LoyaltyProgram.Models
                     .HasColumnName("referrerMemberDate");
 
                 entity.Property(e => e.ReferrerMemberId).HasColumnName("referrerMemberId");
+
+                entity.Property(e => e.RefreshTokenExpiryTime).HasColumnType("date");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
