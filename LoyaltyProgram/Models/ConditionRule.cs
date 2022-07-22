@@ -16,15 +16,16 @@ namespace LoyaltyProgram.Models
         public bool? IsActive { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public double? MaxPoints { get; set; }
-        public double? SpendingValue { get; set; }
-        public double? MinPointsForRedemption { get; set; }
-        public double? MinRedeemablePoints { get; set; }
-        public double? MinRedeemableAmount { get; set; }
+        public int? MaxPoints { get; set; }
+        public int? SpendingValue { get; set; }
+        public int? MinPointsForRedemption { get; set; }
+        public int? MinRedeemablePoints { get; set; }
+        public int? MinRedeemableAmount { get; set; }
         public int? Status { get; set; }
         public string? Description { get; set; }
+        public string? Name { get; set; }
 
         public virtual Program? LoyaltyProgram { get; set; }
-        public virtual ICollection<ConditionGroup> ConditionGroups { get; set; }
+        public virtual ICollection<ConditionGroup>? ConditionGroups { get; set; }
     }
 }

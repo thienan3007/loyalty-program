@@ -1,4 +1,6 @@
 ﻿using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
+using Action = LoyaltyProgram.Models.Action;
 
 namespace LoyaltyProgram.Services
 {
@@ -49,9 +51,29 @@ namespace LoyaltyProgram.Services
             return _databaseContext.Actions.Where(b => b.Status == 1).Count();
         }
 
-        public List<Models.Action> GetActions()
+        public PagedList<Models.Action> GetActions(PagingParameters pagingParameters)
         {
-            return _databaseContext.Actions.Where(b => b.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            PagedList<Models.Action> actions = null;
+            if (filterString != null)
+            {
+                actions = PagedList<Models.Action>.ToPagedList(
+                    _databaseContext.Actions.Where(a => a.Status == 1 && _databaseContext.Memberships.First(m => m.AccountId == a.MembershipId).Email.Contains(filterString)).OrderByDescending(a => a.ActionDate),
+                    pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            else
+            {
+                actions = PagedList<Models.Action>.ToPagedList(
+                    _databaseContext.Actions.Where(a => a.Status == 1).OrderByDescending(a => a.ActionDate),
+                    pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            
+            if (actions != null)
+            {
+                return actions;
+            }
+
+            return null;
         }
 
         public bool UpdateAction(Models.Action action, int id)

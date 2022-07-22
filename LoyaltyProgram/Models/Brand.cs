@@ -18,7 +18,7 @@ namespace LoyaltyProgram.Models
         public int? Status { get; set; }
 
         public virtual Organization? Organization { get; set; }
-        public virtual ICollection<Card> Cards { get; set; }
-        public virtual ICollection<Program> Programs { get; set; }
+        public virtual ICollection<Card>? Cards { get; set; }
+        public virtual ICollection<Program>? Programs { get; set; }
     }
 }

@@ -1,9 +1,15 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Auth;
+using Microsoft.AspNetCore.Authorization;
+using LoyaltyProgram.Models;
 using LoyaltyProgram.Services;
+using LoyaltyProgram.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Action = LoyaltyProgram.Models.Action;
+using AuthorizeAttribute = LoyaltyProgram.Helpers.AuthorizeAttribute;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
+    [Authorize(Role.Admin)]
     [Route("api/v{version:apiVersion}/actions")]
     [ApiVersion("1.0")]
     [ApiController]
@@ -18,11 +24,19 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
-        public IActionResult FindAll()
+        public IActionResult FindAll(int pageNumber, int pageSize)
         {
             try
             {
-                return Ok(actionService.GetActions()); 
+                PagingParameters pagingParameters = new PagingParameters()
+                    {PageNumber = pageNumber, PageSize = pageSize};
+                var actions = actionService.GetActions(pagingParameters);
+                if (actions != null)
+                {
+                    return Ok(actions);
+                }
+
+                return BadRequest();
             }
             catch
             {

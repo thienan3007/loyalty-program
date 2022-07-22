@@ -1,9 +1,14 @@
 ﻿using LoyaltyProgram.Models;
 using LoyaltyProgram.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AuthorizeAttribute = LoyaltyProgram.Helpers.AuthorizeAttribute;
+using LoyaltyProgram.Auth;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
+    [Authorize]
     [Route("api/v{version:apiVersion}/currencies")]
     [ApiVersion("1.0")]
     [ApiController]
@@ -17,11 +22,13 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
-        public IActionResult FindAll()
+        [Authorize(Role.Admin)]
+        public IActionResult FindAll(int pageNumber, int pageSize, string? filterString, string? orderBy)
         {
             try
             {
-                return Ok(currencyService.GetCurrencies());
+                PagingParameters pagingParameters = new PagingParameters() { PageNumber = pageNumber, PageSize = pageSize, FilterString = filterString, OrderBy = orderBy };
+                return Ok(currencyService.GetCurrencies(pagingParameters));
             }
             catch
             {
@@ -31,6 +38,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult GetCurrency(int id)
         {
             try
@@ -45,6 +53,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("count")]
+        [Authorize(Role.Admin)]
         public IActionResult GetCoount()
         {
             try
@@ -59,6 +68,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpDelete("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult DeleteCurrency(int id)
         {
             try
@@ -76,6 +86,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPut("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult UpdateCurrency([FromBody] Currency currency, int id)
         {
             try
@@ -93,6 +104,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPost("")]
+        [Authorize(Role.Admin)]
         public IActionResult AddCurrency([FromBody] Currency currency)
         {
             try

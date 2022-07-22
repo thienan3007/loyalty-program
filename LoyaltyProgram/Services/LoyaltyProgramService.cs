@@ -1,8 +1,10 @@
-﻿namespace LoyaltyProgram.Models
+﻿using LoyaltyProgram.Utils;
+
+namespace LoyaltyProgram.Models
 {
     public interface LoyaltyProgramService
     {
-        public List<Program> GetPrograms();
+        public PagedList<Program> GetPrograms(PagingParameters pagingParameters);
         public Program GetProgramById(int id);
         public int GetProgramCount();
         public bool DeleteProgram(int id);

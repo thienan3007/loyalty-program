@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class TierServiceImpl : TierService
     {
         private readonly DatabaseContext databaseContext;
-        public TierServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<Tier> _sortHelper;
+        public TierServiceImpl(DatabaseContext databaseContext, ISortHelper<Tier> sortHelper)
         {
             this.databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool AddTier(Tier tier)
@@ -34,12 +38,29 @@ namespace LoyaltyProgram.Services
             return false;
         }
 
-        public List<Tier> GetTiers()
+        public PagedList<Tier> GetTiers(PagingParameters pagingParameters)
         {
-            return databaseContext.Tiers.Where(t => t.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<Tier> tiers;
+            if (filterString != null)
+            {
+                tiers = databaseContext.Tiers.Where(t => t.Status == 1 && t.Name.Contains(filterString));
+            }
+            else
+            {
+                tiers = databaseContext.Tiers.Where(t => t.Status == 1);
+            }
+
+            var sortedTiers = _sortHelper.ApplySort(tiers, pagingParameters.OrderBy);
+            if (tiers != null)
+            {
+                return PagedList<Tier>.ToPagedList(sortedTiers, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+
+            return null;
         }
 
-        public Tier GetTierByID(int id)
+        public Tier GetTierByID(int? id)
         {
             var tier = databaseContext.Tiers.FirstOrDefault(t => t.Id == id);
             if (tier != null)
@@ -87,6 +108,49 @@ namespace LoyaltyProgram.Services
             }
 
             return false;
+        }
+
+        public PagedList<Tier> GetTiers(PagingParameters pagingParameters, int programId)
+        {
+            var filterString = pagingParameters.FilterString;
+            IQueryable<Tier> tiers;
+            if (filterString != null)
+            {
+                tiers = databaseContext.Tiers.Where(t => t.Status == 1 && t.LoyaltyProgramId == programId && t.Name.Contains(filterString));
+            }
+            else
+            {
+                tiers = databaseContext.Tiers.Where(t => t.Status == 1);
+            }
+
+            var sortedTiers = _sortHelper.ApplySort(tiers, pagingParameters.OrderBy);
+            if (tiers != null)
+            {
+                return PagedList<Tier>.ToPagedList(sortedTiers, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+
+            return null;
+        }
+
+        public List<Tier> GetTiers()
+        {
+            var tierList = databaseContext.Tiers.ToList();
+            if (tierList != null)
+            {
+                return tierList;
+            }
+            return null;
+        }
+
+        public List<Tier> GetTiers(int programId)
+        {
+            var tierList = databaseContext.Tiers.Where(t => t.Status == 1 && t.LoyaltyProgramId == programId).ToList();
+            if (tierList != null)
+            {
+                return tierList;
+
+            }
+            return null;
         }
     }
 }

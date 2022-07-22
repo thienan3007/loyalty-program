@@ -20,6 +20,6 @@ namespace LoyaltyProgram.Models
         public string? Description { get; set; }
 
         public virtual Program? LoyaltyProgram { get; set; }
-        public virtual ICollection<MemberTier> MemberTiers { get; set; }
+        public virtual ICollection<MemberTier>? MemberTiers { get; set; }
     }
 }

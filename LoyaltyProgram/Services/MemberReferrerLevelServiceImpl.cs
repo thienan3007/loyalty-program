@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class MemberReferrerLevelServiceImpl : MemberReferrerLevelService
     {
         private readonly DatabaseContext _databaseContext;
-        public MemberReferrerLevelServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<MemberReferrerLevel> _sortHelper;
+        public MemberReferrerLevelServiceImpl(DatabaseContext databaseContext, ISortHelper<MemberReferrerLevel> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool AddMemberReferrerLevel(MemberReferrerLevel memberReferrerLevel)
@@ -49,9 +53,15 @@ namespace LoyaltyProgram.Services
             return _databaseContext.MemberReferrerLevels.Where(b => b.Status == 1).Count();
         }
 
-        public List<MemberReferrerLevel> GetMemberReferrerLevels()
+        public PagedList<MemberReferrerLevel> GetMemberReferrerLevels(PagingParameters pagingParameters)
         {
-            return _databaseContext.MemberReferrerLevels.Where(b => b.Status == 1).ToList();
+            var memberReferrerLevels = _databaseContext.MemberReferrerLevels.Where(b => b.Status == 1);
+            var sortedList = _sortHelper.ApplySort(memberReferrerLevels, pagingParameters.OrderBy);
+            if (memberReferrerLevels != null)
+            {
+                return PagedList<MemberReferrerLevel>.ToPagedList(sortedList, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool UpdateMemberReferrerLevel(MemberReferrerLevel memberReferrerLevel, int id)

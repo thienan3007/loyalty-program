@@ -1,6 +1,10 @@
 ﻿using LoyaltyProgram.Models;
 using LoyaltyProgram.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AuthorizeAttribute = LoyaltyProgram.Helpers.AuthorizeAttribute;
+using LoyaltyProgram.Auth;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
@@ -17,11 +21,27 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
+        public IActionResult FindAll(int pageNumber, int pageSize, string? filterString, string? orderBy)
+        {
+            try
+            {
+                PagingParameters pagingParameters = new PagingParameters() { PageNumber = pageNumber, PageSize = pageSize, FilterString = filterString, OrderBy = orderBy };
+                return Ok(voucherDefinitionService.GetVouchers(pagingParameters));
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        [MapToApiVersion("1.0")]
+        [Produces("application/json")]
+        [HttpGet("user")]
         public IActionResult FindAll()
         {
             try
             {
-                return Ok(voucherDefinitionService.GetVouchers());
+                var applicationUser = (ApplicationUser)HttpContext.Items["User"];
+                return Ok(voucherDefinitionService.GetVouchers(applicationUser.Id));
             }
             catch
             {
@@ -59,6 +79,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpDelete("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult DeleteVoucher(int id)
         {
             try
@@ -76,6 +97,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPut("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult UpdateVoucher([FromBody] VoucherDefinition voucher, int id)
         {
             try
@@ -93,6 +115,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPost("")]
+        [Authorize(Role.Admin)]
         public IActionResult AddVoucher([FromBody] VoucherDefinition voucher)
         {
             try

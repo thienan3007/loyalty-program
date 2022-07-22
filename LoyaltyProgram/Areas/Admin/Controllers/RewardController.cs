@@ -1,12 +1,17 @@
 ﻿using LoyaltyProgram.Models;
+using Microsoft.AspNetCore.Authorization;
 using LoyaltyProgram.Services;
 using Microsoft.AspNetCore.Mvc;
+using AuthorizeAttribute = LoyaltyProgram.Helpers.AuthorizeAttribute;
+using LoyaltyProgram.Auth;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
     [Route("api/v{version:apiVersion}/rewards")]
     [ApiVersion("1.0")]
     [ApiController]
+    [Authorize]
     public class RewardController : Controller
     {
         private RewardService rewardService;
@@ -17,11 +22,12 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
-        public IActionResult FindAll()
+        public IActionResult FindAll(int pageNumber, int pageSize, string? filterString, string? orderBy)
         {
             try
             {
-                return Ok(rewardService.GetRewards());
+                PagingParameters pagingParameters = new PagingParameters() { PageNumber = pageNumber, PageSize = pageSize, FilterString = filterString, OrderBy = orderBy };
+                return Ok(rewardService.GetRewards(pagingParameters));
             }
             catch
             {
@@ -59,6 +65,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpDelete("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult Delete(int id)
         {
             try
@@ -76,6 +83,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPut("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult Update([FromBody] Reward reward, int id)
         {
             try
@@ -93,6 +101,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPost("")]
+        [Authorize(Role.Admin)]
         public IActionResult Add([FromBody] Reward reward)
         {
             try

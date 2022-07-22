@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class CurrencyServiceImpl : CurrencyService
     {
         private readonly DatabaseContext _databaseContext;
-        public CurrencyServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<Currency> _sortHelper;
+        public CurrencyServiceImpl(DatabaseContext databaseContext, ISortHelper<Currency> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool AddCurrency(Currency currency)
@@ -49,9 +53,25 @@ namespace LoyaltyProgram.Services
             return _databaseContext.Currencies.Where(c => c.Status == 1).Count();
         }
 
-        public List<Currency> GetCurrencies()
+        public PagedList<Currency> GetCurrencies(PagingParameters pagingParameters)
         {
-            return _databaseContext.Currencies.Where(c => c.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<Currency> currencies;
+            if (filterString != null)
+            {
+                currencies = _databaseContext.Currencies.Where(c => c.Status == 1 && c.Name.Contains(filterString));
+            }
+            else
+            {
+                currencies =_databaseContext.Currencies.Where(c => c.Status == 1);
+            }
+
+            var sortedCurrencies = _sortHelper.ApplySort(currencies, pagingParameters.OrderBy);
+            if (currencies != null)
+            {
+                return PagedList<Currency>.ToPagedList(sortedCurrencies, pagingParameters.PageNumber, pagingParameters.PageSize); ;
+            }
+            return null;
         }
 
         public bool UpdateCurency(Currency currency, int id)

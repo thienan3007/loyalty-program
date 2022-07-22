@@ -2,9 +2,10 @@
 
 namespace LoyaltyProgram.Auth
 {
-    public class ApplicationUser : IdentityUser<int>
+    public class ApplicationUser
     {
-        public string? RefreshToken { get; set; }
-        public DateTime RefreshTokenExpiryTime { get; set; }
+        public string Email { get; set; }
+        public int Id { get; set; }
+        public Role Role { get; set; }
     }
 }

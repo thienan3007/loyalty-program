@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class EventSourceServiceImpl : EventSourceService
     {
         private readonly DatabaseContext _databaseContext;
-        public EventSourceServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<EventSource> _sortHelper;
+        public EventSourceServiceImpl(DatabaseContext databaseContext, ISortHelper<EventSource> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool AddEventSource(EventSource eventSource)
@@ -49,9 +53,25 @@ namespace LoyaltyProgram.Services
             return _databaseContext.EventSources.Where(b => b.Status == 1).Count();
         }
 
-        public List<EventSource> GetEventSources()
+        public PagedList<EventSource> GetEventSources(PagingParameters pagingParameters)
         {
-            return _databaseContext.EventSources.Where(b => b.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<EventSource> eventSources;
+            if (filterString != null)
+            {
+                eventSources =_databaseContext.EventSources.Where(b => b.Status == 1 && b.Name.Contains(filterString));
+            }
+            else
+            {
+                eventSources =_databaseContext.EventSources.Where(b => b.Status == 1);
+            }
+
+            var sortedEventSources = _sortHelper.ApplySort(eventSources, pagingParameters.OrderBy);
+            if (eventSources != null)
+            {
+                return PagedList<EventSource>.ToPagedList(sortedEventSources, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool UpdateEventSource(EventSource eventSource, int id)

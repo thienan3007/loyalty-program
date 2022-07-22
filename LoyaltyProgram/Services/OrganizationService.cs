@@ -1,10 +1,11 @@
 ﻿using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public interface OrganizationService
     {
-        public List<Organization> GetOrganizations();
+        public PagedList<Organization> GetOrganizations(PagingParameters pagingParameters);
         public Organization GetOrganizationById(int organizationId);
         public bool AddOrganization(Organization organization);
         public bool UpdateOrganization(Organization organization, int id);

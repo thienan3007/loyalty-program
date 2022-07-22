@@ -1,18 +1,23 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class CardServiceImpl : CardService
     {
         private readonly DatabaseContext _databaseContext;
-        public CardServiceImpl(DatabaseContext databaseContext)
+        private readonly MembershipService membershipService;
+        private ISortHelper<Card> _sortHelper;
+        public CardServiceImpl(DatabaseContext databaseContext, MembershipService membershipService, ISortHelper<Card> sortHelper)
         {
             _databaseContext = databaseContext;
+            this.membershipService = membershipService;
+            _sortHelper = sortHelper;
         }
 
         public bool Add(Card card)
         {
-
             _databaseContext.Cards.Add(card);
             return _databaseContext.SaveChanges() > 0;
         }
@@ -38,9 +43,10 @@ namespace LoyaltyProgram.Services
             {
                 if (card.Status == 1)
                 {
+                    card.Membership = this.membershipService.GetMembershipById((int)card.MembershipId);
                     return card;
                 }
-            } 
+            }
             return null;
         }
 
@@ -49,9 +55,26 @@ namespace LoyaltyProgram.Services
             return _databaseContext.Cards.Where(b => b.Status == 1).Count();
         }
 
-        public List<Card> GetCards()
+        public PagedList<Card> GetCards(PagingParameters pagingParameters)
         {
-            return _databaseContext.Cards.Where(b => b.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<Card> cards;
+            if (filterString != null)
+            {
+                cards = _databaseContext.Cards.Where(b =>
+                    b.Status == 1 && b.CardholderName.Contains(filterString));
+            }
+            else
+            {
+                cards = _databaseContext.Cards.Where(b => b.Status == 1);
+            }
+
+            var sortedCards = _sortHelper.ApplySort(cards, pagingParameters.OrderBy);
+            if (cards != null)
+            {
+                return PagedList<Card>.ToPagedList(sortedCards, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool Update(Card card, int id)
@@ -84,6 +107,20 @@ namespace LoyaltyProgram.Services
             }
 
             return false;
+        }
+
+        public Card GetCardById(int memberId)
+        {
+            var card = _databaseContext.Cards.FirstOrDefault(c => c.MembershipId == memberId);
+            if (card != null)
+            {
+                if (card.Status == 1)
+                {
+                    card.Membership = membershipService.GetMembershipById(memberId);
+                    return card;
+                }
+            }
+            return null;
         }
     }
 }

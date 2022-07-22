@@ -1,13 +1,20 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace LoyaltyProgram.Services
 {
     public class MemberCurrencyServiceImpl : MemberCurrencyService
     {
         private readonly DatabaseContext _databaseContext;
-        public MemberCurrencyServiceImpl(DatabaseContext databaseContext)
+        private readonly MembershipService _membershipService;
+        private ISortHelper<MembershipCurrency> _sortHelper;
+        public MemberCurrencyServiceImpl(DatabaseContext databaseContext, MembershipService membershipService, ISortHelper<MembershipCurrency> sortHelper)
         {
             _databaseContext = databaseContext;
+            _membershipService = membershipService;
+            _sortHelper = sortHelper;
         }
 
         public bool AddMembershipCurrency(MembershipCurrency membershipCurrency)
@@ -31,13 +38,14 @@ namespace LoyaltyProgram.Services
             return false;
         }
 
-        public MembershipCurrency GetMembershipCurrency(int id)
+        public MembershipCurrency GetMembershipCurrency(int membershipId, int currencyId)
         {
-            var membershipCurrency = _databaseContext.MembershipCurrencies.FirstOrDefault(b => b.Id == id);
+            var membershipCurrency = _databaseContext.MembershipCurrencies.FirstOrDefault(b => b.MembershipId == membershipId && b.CurrencyId == currencyId);
             if (membershipCurrency != null)
             {
                 if (membershipCurrency.Status == 1)
                 {
+                    membershipCurrency.Membership = _membershipService.GetMembershipById(membershipId);
                     return membershipCurrency;
                 }
             }
@@ -49,16 +57,32 @@ namespace LoyaltyProgram.Services
             return _databaseContext.MembershipCurrencies.Where(b => b.Status == 1).Count();
         }
 
-        public List<MembershipCurrency> GetMembershipCurrencies()
+        public PagedList<MembershipCurrency> GetMembershipCurrencies(PagingParameters pagingParameters)
         {
-            return _databaseContext.MembershipCurrencies.Where(b => b.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<MembershipCurrency> currencies;
+            if (filterString != null)
+            {
+                currencies =_databaseContext.MembershipCurrencies.Where(b => b.Status == 1 && b.Name.Contains(filterString));
+            }
+            else
+            {
+                currencies = _databaseContext.MembershipCurrencies.Where(b => b.Status == 1);
+            }
+
+            var sortedCurrencies = _sortHelper.ApplySort(currencies, pagingParameters.OrderBy);
+            if (currencies != null)
+            {
+                return PagedList<MembershipCurrency>.ToPagedList(sortedCurrencies, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
-        public bool UpdateMembershipCurrency(MembershipCurrency membershipCurrency, int id)
+        public bool UpdateMembershipCurrency(MembershipCurrency membershipCurrency, int membershipId, int currencyId)
         {
             if (membershipCurrency != null)
             {
-                var membershipCurrencyDb = GetMembershipCurrency(id);
+                var membershipCurrencyDb = GetMembershipCurrency(membershipId, currencyId);
                 if (membershipCurrencyDb != null)
                 {
                     if (membershipCurrencyDb.Status == 1)
@@ -88,6 +112,7 @@ namespace LoyaltyProgram.Services
                         if (membershipCurrency.Description != null)
                             membershipCurrencyDb.Description = membershipCurrency.Description;
 
+                        _databaseContext.Entry(membershipCurrencyDb).State = EntityState.Modified;
                         return _databaseContext.SaveChanges() > 0;
                     }
                 }

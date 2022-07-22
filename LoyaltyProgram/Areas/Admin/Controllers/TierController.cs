@@ -1,12 +1,18 @@
 ﻿using LoyaltyProgram.Models;
+using Microsoft.AspNetCore.Authorization;
 using LoyaltyProgram.Services;
 using Microsoft.AspNetCore.Mvc;
+using AuthorizeAttribute = LoyaltyProgram.Helpers.AuthorizeAttribute;
+using LoyaltyProgram.Auth;
+using LoyaltyProgram.Utils;
+using Newtonsoft.Json;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
     [Route("api/v{version:apiVersion}/tiers")]
     [ApiVersion("1.0")]
     [ApiController]
+    [Authorize]
     public class TierController : Controller
     {
         private TierService tierService;
@@ -17,7 +23,75 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
-        public IActionResult FindAll()
+        public IActionResult FindAll(int pageNumber, int pageSize, string? filterString, string? orderBy)
+        {
+            try
+            {
+                PagingParameters pagingParameters = new PagingParameters() { PageNumber = pageNumber, PageSize = pageSize, FilterString = filterString, OrderBy = orderBy };     
+
+                var tiers = tierService.GetTiers(pagingParameters);
+                var metadata = new
+                {
+                    tiers.TotalCount,
+                    tiers.PageSize,
+                    tiers.CurrentPage,
+                    tiers.TotalPages,
+                    tiers.HasNext,
+                    tiers.HasPrevious
+                };
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+                return Ok(tiers);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        [MapToApiVersion("1.0")]
+        [Produces("application/json")]
+        [HttpGet("program")]
+        public IActionResult FindAll(int pageNumber, int pageSize, string? filterString, string? orderBy, int programId)
+        {
+            try
+            {
+                PagingParameters pagingParameters = new PagingParameters() { PageNumber = pageNumber, PageSize = pageSize, FilterString = filterString, OrderBy = orderBy };
+
+                var tiers = tierService.GetTiers(pagingParameters, programId);
+                var metadata = new
+                {
+                    tiers.TotalCount,
+                    tiers.PageSize,
+                    tiers.CurrentPage,
+                    tiers.TotalPages,
+                    tiers.HasNext,
+                    tiers.HasPrevious
+                };
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+                return Ok(tiers);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        [MapToApiVersion("1.0")]
+        [Produces("application/json")]
+        [HttpGet("program/{id}")]
+        public IActionResult GetTierByProgramId(int id)
+        {
+            try
+            {
+                return Ok(tierService.GetTiers(id));
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        [MapToApiVersion("1.0")]
+        [Produces("application/json")]
+        [HttpGet("find-all")]
+        public IActionResult GetTiers()
         {
             try
             {
@@ -59,6 +133,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpDelete("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult DeleteTier(int id)
         {
             try
@@ -76,6 +151,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPut("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult UpdateTier([FromBody] Tier tier, int id)
         {
             try
@@ -93,6 +169,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPost("")]
+        [Authorize(Role.Admin)]
         public IActionResult AddTier([FromBody] Tier tier)
         {
             try

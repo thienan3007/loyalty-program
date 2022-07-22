@@ -1,12 +1,17 @@
 ﻿using LoyaltyProgram.Models;
+using Microsoft.AspNetCore.Authorization;
 using LoyaltyProgram.Services;
 using Microsoft.AspNetCore.Mvc;
+using AuthorizeAttribute = LoyaltyProgram.Helpers.AuthorizeAttribute;
+using LoyaltyProgram.Auth;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
     [Route("api/v{version:apiVersion}/order-item-conditions")]
     [ApiVersion("1.0")]
     [ApiController]
+    [Authorize(Role.Admin)]
     public class OrderItemConditionController : Controller
     {
         private OrderItemConditionService orderItemConditionService;
@@ -17,11 +22,12 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
-        public IActionResult FindAll()
+        public IActionResult FindAll(int pageNumber, int pageSize, string? orderBy)
         {
             try
             {
-                return Ok(orderItemConditionService.GetOrderItemConditions());
+                PagingParameters pagingParameters = new PagingParameters() { PageNumber = pageNumber, PageSize = pageSize, OrderBy = orderBy };
+                return Ok(orderItemConditionService.GetOrderItemConditions(pagingParameters));
             }
             catch
             {

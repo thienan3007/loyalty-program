@@ -1,4 +1,6 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
@@ -6,9 +8,13 @@ namespace LoyaltyProgram.Services
     {
 
         private readonly DatabaseContext databaseContext;
-        public MemberTierServiceImpl(DatabaseContext databaseContext)
+        private readonly MembershipService membershipService;
+        private ISortHelper<MemberTier> _sortHelper;
+        public MemberTierServiceImpl(DatabaseContext databaseContext, MembershipService membershipService, ISortHelper<MemberTier> sortHelper)
         {
             this.databaseContext = databaseContext;
+            this.membershipService = membershipService;
+            this._sortHelper = sortHelper;
         }
 
         public bool AddMemberTier(MemberTier memberTier)
@@ -48,20 +54,68 @@ namespace LoyaltyProgram.Services
             {
                 if (memberTierDb.Status == 1)
                 {
+                    memberTierDb.LoyaltyMember = this.membershipService.GetMembershipById(loyaltyMemberId);
                     return memberTierDb;
                 }
             }
             return null;
         }
 
-        public List<MemberTier> GetMemberTiers(int loyaltyMemberId)
+        public MemberTier GetMemberTierCurrent(int loyaltyMemberId)
         {
-            return databaseContext.MemberTiers.Where(m => m.LoyaltyMemberId == loyaltyMemberId).ToList();
+            var memberTier = databaseContext.MemberTiers.Where(m => m.LoyaltyMemberId == loyaltyMemberId).OrderByDescending(m => m.Id).First();
+            if (memberTier != null)
+            {
+                if (memberTier.Status == 1)
+                {
+                    memberTier.LoyaltyMember = this.membershipService.GetMembershipById(loyaltyMemberId);
+                    return memberTier;
+                }
+            }
+            return null;
         }
 
-        public List<MemberTier> GetMemberTiers()
+        public PagedList<MemberTier> GetMemberTiers(int loyaltyMemberId, PagingParameters pagingParameters)
         {
-            return databaseContext.MemberTiers.ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<MemberTier> memberTierList;
+            if (filterString != null)
+            {
+                memberTierList = databaseContext.MemberTiers.Where(m => m.LoyaltyMemberId == loyaltyMemberId && m.Status == 1 && m.Name.Contains(filterString));
+            }
+            else
+            {
+                memberTierList = databaseContext.MemberTiers.Where(m => m.LoyaltyMemberId == loyaltyMemberId && m.Status == 1);
+            }
+
+            var sortedMemberTierList = _sortHelper.ApplySort(memberTierList, pagingParameters.OrderBy);
+            //foreach (MemberTier memberTier in memberTierList)
+            //{
+            //    memberTier.LoyaltyMember = this.membershipService.GetMembershipById(loyaltyMemberId);
+            //}
+            return
+                PagedList<MemberTier>.ToPagedList(sortedMemberTierList, pagingParameters.PageNumber, pagingParameters.PageSize);
+        }
+
+        public PagedList<MemberTier> GetMemberTiers(PagingParameters pagingParameters)
+        {
+            var filterString = pagingParameters.FilterString;
+            IQueryable<MemberTier> memberTiers;
+            if (filterString != null)
+            {
+                memberTiers = databaseContext.MemberTiers.Where(c => c.Name.Contains(filterString));
+            }
+            else
+            {
+                memberTiers = databaseContext.MemberTiers;
+            }
+
+            var sortedMemberTiers = _sortHelper.ApplySort(memberTiers, pagingParameters.OrderBy);
+            if (memberTiers != null)
+            {
+                return PagedList<MemberTier>.ToPagedList(sortedMemberTiers, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null; ;
         }
 
         public bool UpdateMemberTier(MemberTier memberTier, int loyaltyMemberId, int loyaltyTierId)
@@ -79,8 +133,8 @@ namespace LoyaltyProgram.Services
                             memberTierDb.EffectiveDate = memberTier.EffectiveDate;
                         if (memberTier.ExpirationDate != null)
                             memberTierDb.ExpirationDate = memberTier.ExpirationDate;
-                        if (memberTier.UdpateTierDate != null)
-                            memberTierDb.UdpateTierDate = memberTierDb.UdpateTierDate;
+                        if (memberTier.UpdateTierDate != null)
+                            memberTierDb.UpdateTierDate = memberTierDb.UpdateTierDate;
                         if (memberTier.Status != null)
                             memberTierDb.Status = memberTier.Status;
                         if (memberTier.Description != null)
