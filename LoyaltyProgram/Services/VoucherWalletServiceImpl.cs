@@ -1,13 +1,19 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class VoucherWalletServiceImpl : VoucherWalletService
     {
         private readonly DatabaseContext _databaseContext;
-        public VoucherWalletServiceImpl(DatabaseContext databaseContext)
+        private readonly VoucherDefinitionService voucherDefinitionService;
+        private ISortHelper<VoucherWallet> _sortHelper;
+        public VoucherWalletServiceImpl(DatabaseContext databaseContext, VoucherDefinitionService voucherDefinitionService, ISortHelper<VoucherWallet> sortHelper)
         {
             _databaseContext = databaseContext;
+            this.voucherDefinitionService = voucherDefinitionService;
+            _sortHelper = sortHelper;
         }
 
         public bool Add(VoucherWallet voucherWallet)
@@ -40,7 +46,7 @@ namespace LoyaltyProgram.Services
                 {
                     return voucherWallet;
                 }
-            } 
+            }
             return null;
         }
 
@@ -49,9 +55,25 @@ namespace LoyaltyProgram.Services
             return _databaseContext.VoucherWallets.Where(b => b.Status == 1).Count();
         }
 
-        public List<VoucherWallet> GetVoucherWallets()
+        public PagedList<VoucherWallet> GetVoucherWallets(PagingParameters pagingParameters)
         {
-            return _databaseContext.VoucherWallets.Where(b => b.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<VoucherWallet> voucherWallets;
+            if (filterString != null)
+            {
+                voucherWallets = _databaseContext.VoucherWallets.Where(b => b.Status == 1 && _databaseContext.VoucherDefinitions.First(v => v.Id == b.VoucherDefinitionId).Name.Contains(filterString));
+            }
+            else
+            {
+                voucherWallets = _databaseContext.VoucherWallets.Where(b => b.Status == 1);
+            }
+
+            var sortedWallet = _sortHelper.ApplySort(voucherWallets, pagingParameters.OrderBy);
+            if (voucherWallets != null)
+            {
+                return PagedList<VoucherWallet>.ToPagedList(sortedWallet, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool Update(VoucherWallet voucherWallet, int membershipId, int voucherDefinitionId)
@@ -82,6 +104,15 @@ namespace LoyaltyProgram.Services
             }
 
             return false;
+        }
+
+        public PagedList<VoucherWallet> GetVoucherOfMember(int membershipId, PagingParameters pagingParameters)
+        {
+            var voucherWalletList = PagedList<VoucherWallet>.ToPagedList(_databaseContext.VoucherWallets.Where(v => v.MembershipId == membershipId).OrderBy(c => c.MembershipId), pagingParameters.PageNumber, pagingParameters.PageSize);
+            foreach (VoucherWallet voucherWallet in voucherWalletList) {
+                voucherWallet.VoucherDefinition = this.voucherDefinitionService.GetVoucher(voucherWallet.VoucherDefinitionId);
+            }
+            return voucherWalletList;
         }
     }
 }

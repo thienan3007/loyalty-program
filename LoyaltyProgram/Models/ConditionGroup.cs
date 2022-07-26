@@ -17,9 +17,10 @@ namespace LoyaltyProgram.Models
         public DateTime? UpdateDate { get; set; }
         public int? Status { get; set; }
         public string? Description { get; set; }
+        public string? Name { get; set; }
 
         public virtual ConditionRule? ConditionRule { get; set; }
-        public virtual ICollection<OrderAmountCondition> OrderAmountConditions { get; set; }
-        public virtual ICollection<OrderItemCondition> OrderItemConditions { get; set; }
+        public virtual ICollection<OrderAmountCondition>? OrderAmountConditions { get; set; }
+        public virtual ICollection<OrderItemCondition>? OrderItemConditions { get; set; }
     }
 }

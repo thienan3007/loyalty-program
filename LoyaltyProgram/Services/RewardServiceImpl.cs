@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class RewardServiceImpl : RewardService
     {
         private readonly DatabaseContext _databaseContext;
-        public RewardServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<Reward> _sortHelper;
+        public RewardServiceImpl(DatabaseContext databaseContext, ISortHelper<Reward> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool AddReward(Reward reward)
@@ -49,9 +53,25 @@ namespace LoyaltyProgram.Services
             return _databaseContext.Rewards.Where(b => b.Status == 1).Count();
         }
 
-        public List<Reward> GetRewards()
+        public PagedList<Reward> GetRewards(PagingParameters pagingParameters)
         {
-            return _databaseContext.Rewards.Where(b => b.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<Reward> rewards;
+            if (filterString != null)
+            {
+                rewards = _databaseContext.Rewards.Where(b => b.Status == 1 && b.Name.Contains(filterString));
+            }
+            else
+            {
+                rewards = _databaseContext.Rewards.Where(b => b.Status == 1);
+            }
+
+            var sortedRewards = _sortHelper.ApplySort(rewards, pagingParameters.OrderBy);
+            if (rewards != null)
+            {
+                return PagedList<Reward>.ToPagedList(sortedRewards, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool UpdateReward(Reward reward, int id)
@@ -69,8 +89,8 @@ namespace LoyaltyProgram.Services
                             rewardDb.CreatedAt = reward.CreatedAt;
                         if (reward.Type != null)
                             reward.Type = reward.Type;
-                        if (reward.Paramaters != null)
-                            rewardDb.Paramaters = reward.Paramaters;
+                        if (reward.Parameters != null)
+                            rewardDb.Parameters = reward.Parameters;
                         if (reward.Stock != null)
                             rewardDb.Stock = reward.Stock;
                         if (reward.Redeemed != null)

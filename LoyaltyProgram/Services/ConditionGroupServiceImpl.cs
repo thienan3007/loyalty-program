@@ -1,13 +1,18 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class ConditionGroupServiceImpl : ConditionGroupService
+
     {
         private readonly DatabaseContext _databaseContext;
-        public ConditionGroupServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<ConditionGroup> _sortHelper;
+        public ConditionGroupServiceImpl(DatabaseContext databaseContext, ISortHelper<ConditionGroup> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool Add(ConditionGroup conditionGroup)
@@ -49,9 +54,17 @@ namespace LoyaltyProgram.Services
             return _databaseContext.ConditionGroups.Where(b => b.Status == 1).Count();
         }
 
-        public List<ConditionGroup> GetConditionGroups()
+        public PagedList<ConditionGroup> GetConditionGroups(PagingParameters pagingParameters)
         {
-            return _databaseContext.ConditionGroups.Where(b => b.Status == 1).ToList();
+            var conditionGroups = _databaseContext.ConditionGroups.Where(b => b.Status == 1);
+            var sortedConditionGroups = _sortHelper.ApplySort(conditionGroups, pagingParameters.OrderBy);
+
+            if (conditionGroups != null)
+            {
+                return PagedList<ConditionGroup>.ToPagedList(sortedConditionGroups, pagingParameters.PageNumber,
+                    pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool Update(ConditionGroup conditionGroup, int id)
@@ -83,6 +96,16 @@ namespace LoyaltyProgram.Services
             }
 
             return false;
+        }
+
+        public List<ConditionGroup> FindAll()
+        {
+            var conditionGroupList = _databaseContext.ConditionGroups.ToList();
+            if (conditionGroupList != null)
+            {
+                return conditionGroupList;
+            }
+            return null;
         }
     }
 }

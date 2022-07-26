@@ -7,14 +7,14 @@ namespace LoyaltyProgram.Models
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public double? PointsBalance { get; set; }
-        public double? TotalPointsRedeemed { get; set; }
-        public double? TotalPointsExpired { get; set; }
-        public double? TotalPointsAccrued { get; set; }
-        public double? BalanceBeforeReset { get; set; }
+        public int? PointsBalance { get; set; }
+        public int? TotalPointsRedeemed { get; set; }
+        public int? TotalPointsExpired { get; set; }
+        public int? TotalPointsAccrued { get; set; }
+        public int? BalanceBeforeReset { get; set; }
         public DateTime? LastResetDate { get; set; }
-        public double? ExpirationPoints { get; set; }
-        public int? MembershipId { get; set; }
+        public int? ExpirationPoints { get; set; }
+        public int MembershipId { get; set; }
         public int? CurrencyId { get; set; }
         public int? Status { get; set; }
         public string? Description { get; set; }

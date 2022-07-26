@@ -1,12 +1,16 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class OrderItemConditionServiceImpl : OrderItemConditionService
     {
         private readonly DatabaseContext _databaseContext;
-        public OrderItemConditionServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<OrderItemCondition> _sortHelper;
+        public OrderItemConditionServiceImpl(DatabaseContext databaseContext, ISortHelper<OrderItemCondition> sortHelper)
         {
+            _sortHelper = sortHelper;
             _databaseContext = databaseContext;
         }
 
@@ -49,9 +53,15 @@ namespace LoyaltyProgram.Services
             return _databaseContext.OrderItemConditions.Where(b => b.Status == 1).Count();
         }
 
-        public List<OrderItemCondition> GetOrderItemConditions()
+        public PagedList<OrderItemCondition> GetOrderItemConditions(PagingParameters pagingParameters)
         {
-            return _databaseContext.OrderItemConditions.Where(b => b.Status == 1).ToList();
+            var orderItemConditions = _databaseContext.OrderItemConditions.Where(b => b.Status == 1);
+            var sortedList = _sortHelper.ApplySort(orderItemConditions, pagingParameters.OrderBy);
+            if (orderItemConditions != null)
+            {
+                return PagedList<OrderItemCondition>.ToPagedList(sortedList, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool Update(OrderItemCondition orderItemCondition, int id)

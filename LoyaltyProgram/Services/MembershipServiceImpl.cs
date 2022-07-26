@@ -1,23 +1,28 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class MembershipServiceImpl : MembershipService
     {
         private DatabaseContext databaseContext;
-        public MembershipServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<Membership> _sortHelper;
+        public MembershipServiceImpl(DatabaseContext databaseContext, ISortHelper<Membership> sortHelper)
         {
             this.databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
-        public bool AddMembership(Membership membership)
+        public int AddMembership(Membership membership)
         {
             if (membership != null)
             {
                 databaseContext.Memberships.Add(membership);
-                return databaseContext.SaveChanges() > 0;
+                databaseContext.SaveChanges();
+                return membership.AccountId;
             }
-            return false;
+            return 0;
         }
 
         public bool DeleteMembership(int id)
@@ -49,9 +54,35 @@ namespace LoyaltyProgram.Services
             return null;
         }
 
-        public List<Membership> GetMemberships()
+        public Membership GetMembership(string email)
         {
-            return databaseContext.Memberships.Where(m => m.Status == 1).ToList();
+            var membership = databaseContext.Memberships.FirstOrDefault(m => m.Email == email);
+            if (membership != null)
+            {
+                return membership;
+            }
+            return null;
+        }
+
+        public PagedList<Membership> GetMemberships(PagingParameters pagingParameters)
+        {
+            var filterString = pagingParameters.FilterString;
+            IQueryable<Membership> memberships;
+            if (filterString != null)
+            {
+                memberships =databaseContext.Memberships.Where(m => m.Status == 1 && m.Email.Contains(filterString));
+            }
+            else
+            {
+                memberships = databaseContext.Memberships.Where(m => m.Status == 1);
+            }
+
+            var sortedMemberships = _sortHelper.ApplySort(memberships, pagingParameters.OrderBy);
+            if (memberships != null)
+            {
+                return PagedList<Membership>.ToPagedList(sortedMemberships, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool UpdateMembership(Membership membership, int id)
@@ -73,8 +104,8 @@ namespace LoyaltyProgram.Services
                             membershipDb.LastTransactionDate = membership.LastTransactionDate;
                         if (membership.Description != null)
                             membershipDb.Description = membership.Description;
-                        if (membership.EnrollmenDate != null)
-                            membershipDb.EnrollmenDate = membership.EnrollmenDate;
+                        if (membership.EnrollmentDate != null)
+                            membershipDb.EnrollmentDate = membership.EnrollmentDate;
                         if (membership.LoyaltyProgramId != null)
                             membershipDb.LoyaltyProgramId = membership.LoyaltyProgramId;
                         if (membership.MembershipCode != null)

@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class LoyaltyProgramServiceImpl : LoyaltyProgramService
     {
         private DatabaseContext databaseContext;
-        public LoyaltyProgramServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<Models.Program> _sortHelper;
+        public LoyaltyProgramServiceImpl(DatabaseContext databaseContext, ISortHelper<Models.Program> sortHelper)
         {
             this.databaseContext = databaseContext;
+            this._sortHelper = sortHelper;
         }
         public bool AddProgram(Models.Program program)
         {
@@ -53,9 +57,25 @@ namespace LoyaltyProgram.Services
             return null;
         }
 
-        public List<Models.Program> GetPrograms()
+        public PagedList<Models.Program> GetPrograms(PagingParameters pagingParameters)
         {
-            return databaseContext.Programs.Where(o => o.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<Models.Program> programs;
+            if (filterString != null)
+            {
+                programs =databaseContext.Programs.Where(c => c.Status == 1 && c.Name.Contains(filterString));
+            }
+            else
+            {
+                programs = databaseContext.Programs.Where(c => c.Status == 1);
+            }
+
+            var sortedPrograms = _sortHelper.ApplySort(programs, pagingParameters.OrderBy);
+            if (programs != null)
+            {
+                return PagedList<Models.Program>.ToPagedList(sortedPrograms, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool UpdateProgram(Models.Program program, int id)

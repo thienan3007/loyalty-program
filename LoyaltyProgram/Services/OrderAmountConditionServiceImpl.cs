@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class OrderAmountConditionServiceImpl : OrderAmountConditionService
     {
         private readonly DatabaseContext _databaseContext;
-        public OrderAmountConditionServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<OrderAmountCondition> _sortHelper;
+        public OrderAmountConditionServiceImpl(DatabaseContext databaseContext, ISortHelper<OrderAmountCondition> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool Add( OrderAmountCondition orderAmountCondition)
@@ -49,9 +53,15 @@ namespace LoyaltyProgram.Services
             return _databaseContext.OrderAmountConditions.Where(b => b.Status == 1).Count();
         }
 
-        public List<OrderAmountCondition> GetOrderAmountConditions()
+        public PagedList<OrderAmountCondition> GetOrderAmountConditions(PagingParameters pagingParameters)
         {
-            return _databaseContext.OrderAmountConditions.Where(b => b.Status == 1).ToList();
+            var orderAmountConditions = _databaseContext.OrderAmountConditions.Where(b => b.Status == 1);
+            var sortedList = _sortHelper.ApplySort(orderAmountConditions, pagingParameters.OrderBy);
+            if (orderAmountConditions != null)
+            {
+                return PagedList<OrderAmountCondition>.ToPagedList(sortedList, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool Update(OrderAmountCondition orderAmountCondition, int id)
@@ -73,8 +83,8 @@ namespace LoyaltyProgram.Services
                             orderAmountConditionDb.OrderTotalAmountGainPoint = orderAmountCondition.OrderTotalAmountGainPoint;
                         if (orderAmountCondition.OrderTotalAmountAfterDiscount != null)
                             orderAmountConditionDb.OrderTotalAmountAfterDiscount = orderAmountCondition.OrderTotalAmountAfterDiscount;
-                        if (orderAmountCondition.NextOrderTotalAmountAfterDiscount != null)
-                            orderAmountConditionDb.NextOrderTotalAmountAfterDiscount = orderAmountCondition.NextOrderTotalAmountAfterDiscount;
+                        if (orderAmountCondition.NextOrderTotalAmountAfterDiscont != null)
+                            orderAmountConditionDb.NextOrderTotalAmountAfterDiscont = orderAmountCondition.NextOrderTotalAmountAfterDiscont;
                         if (orderAmountCondition.OrderTotalAmountAfterDiscountGainPoint != null)
                             orderAmountConditionDb.OrderTotalAmountAfterDiscountGainPoint = orderAmountCondition.OrderTotalAmountAfterDiscountGainPoint;
                         if (orderAmountCondition.TierSequenceNumber != null)

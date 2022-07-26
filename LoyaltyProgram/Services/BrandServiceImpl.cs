@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class BrandServiceImpl : BrandService
     {
         private readonly DatabaseContext _databaseContext;
-        public BrandServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<Brand> _sortHelper;
+        public BrandServiceImpl(DatabaseContext databaseContext, ISortHelper<Brand> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool AddBrand(Brand brand)
@@ -49,9 +53,27 @@ namespace LoyaltyProgram.Services
             return _databaseContext.Brands.Where(b => b.Status == 1).Count();
         }
 
-        public List<Brand> GetBrands()
+        public PagedList<Brand> GetBrands(PagingParameters pagingParameters)
         {
-            return _databaseContext.Brands.Where(b => b.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            //PagedList<Brand> brands;
+            
+            //if (filterString != null)
+            //{
+                //brands = PagedList<Brand>.ToPagedList(_databaseContext.Brands.Where(b => b.Status == 1 && b.Name.Contains(filterString)).OrderBy(b => b.Id), pagingParameters.PageNumber, pagingParameters.PageSize);
+                var brands = _databaseContext.Brands.Where(b => b.Status == 1 && b.Name.Contains(filterString));
+            //}
+            //else
+            //{
+            //    brands = PagedList<Brand>.ToPagedList(_databaseContext.Brands.Where(b => b.Status == 1).OrderBy(b => b.Id), pagingParameters.PageNumber, pagingParameters.PageSize);
+
+            //}
+            var sortedBrands = _sortHelper.ApplySort(brands, pagingParameters.OrderBy);
+            if (brands != null)
+            {
+                return PagedList<Brand>.ToPagedList(sortedBrands, pagingParameters.PageNumber, pagingParameters.PageSize); ;
+            }
+            return null;
         }
 
         public bool UpdateBrand(Brand brand, int id)

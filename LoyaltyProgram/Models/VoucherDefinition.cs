@@ -12,7 +12,7 @@ namespace LoyaltyProgram.Models
 
         public int Id { get; set; }
         public string? Name { get; set; }
-        public double? DiscountValue { get; set; }
+        public int? DiscountValue { get; set; }
         public DateTime? EffectiveDate { get; set; }
         public DateTime? ExpirationDate { get; set; }
         public string? VoucherCode { get; set; }
@@ -21,7 +21,9 @@ namespace LoyaltyProgram.Models
         public int? ExpirationPeriod { get; set; }
         public string? ExpirationPeriodUnits { get; set; }
         public bool? IsPartialRedeemable { get; set; }
+        public string? Image { get; set; }
+        public int? Point { get; set; }
 
-        public virtual ICollection<VoucherWallet> VoucherWallets { get; set; }
+        public virtual ICollection<VoucherWallet>? VoucherWallets { get; set; }
     }
 }

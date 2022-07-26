@@ -1,12 +1,18 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Auth;
+using Microsoft.AspNetCore.Authorization;
+using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
 using LoyaltyProgram.Services;
 using Microsoft.AspNetCore.Mvc;
+using AuthorizeAttribute = LoyaltyProgram.Helpers.AuthorizeAttribute;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Areas.Admin.Controllers
 {
     [Route("api/v{version:apiVersion}/programs")]
     [ApiVersion("1.0")]
     [ApiController]
+    [Authorize]
     public class LoyaltyProgramController : Controller
     {
         private LoyaltyProgramService loyaltyProgramService;
@@ -17,11 +23,13 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("")]
-        public IActionResult FindAll()
+        [Authorize(Role.Admin)]
+        public IActionResult FindAll(int pageNumber, int pageSize, string? filterString, string? orderBy)
         {
             try
             {
-                return Ok(loyaltyProgramService.GetPrograms());
+                PagingParameters pagingParameters = new PagingParameters() { PageNumber = pageNumber, PageSize = pageSize, FilterString = filterString, OrderBy = orderBy };
+                return Ok(loyaltyProgramService.GetPrograms(pagingParameters));
             }
             catch
             {
@@ -31,6 +39,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult GetProgram(int id)
         {
             try
@@ -45,6 +54,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpGet("count")]
+        [Authorize(Role.Admin)]
         public IActionResult GetCount()
         {
             try
@@ -59,6 +69,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpDelete("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult DeleteProgram(int id)
         {
             try
@@ -76,6 +87,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPut("{id}")]
+        [Authorize(Role.Admin)]
         public IActionResult UpdateProgram([FromBody] Models.Program program, int id)
         {
             try
@@ -93,6 +105,7 @@ namespace LoyaltyProgram.Areas.Admin.Controllers
         [MapToApiVersion("1.0")]
         [Produces("application/json")]
         [HttpPost("")]
+        [Authorize(Role.Admin)]
         public IActionResult AddBrand([FromBody] Models.Program program)
         {
             try

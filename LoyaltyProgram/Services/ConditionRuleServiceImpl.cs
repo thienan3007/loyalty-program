@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class ConditionRuleServiceImpl : ConditionRuleService
     {
         private readonly DatabaseContext _databaseContext;
-        public ConditionRuleServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<ConditionRule> _sortHelper;
+        public ConditionRuleServiceImpl(DatabaseContext databaseContext, ISortHelper<ConditionRule> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool Add(ConditionRule conditionRule)
@@ -31,6 +35,11 @@ namespace LoyaltyProgram.Services
             return false;
         }
 
+        public List<ConditionRule> FindAll()
+        {
+            return _databaseContext.ConditionRules.ToList();
+        }
+
         public ConditionRule GetConditionRule(int id)
         {
             var conditionRule = _databaseContext.ConditionRules.FirstOrDefault(b => b.Id == id);
@@ -49,9 +58,17 @@ namespace LoyaltyProgram.Services
             return _databaseContext.ConditionRules.Where(b => b.Status == 1).Count();
         }
 
-        public List<ConditionRule> GetConditionRules()
+        public PagedList<ConditionRule> GetConditionRules(PagingParameters pagingParameters)
         {
-            return _databaseContext.ConditionRules.Where(b => b.Status == 1).ToList();
+            var rules =_databaseContext.ConditionRules.Where(b => b.Status == 1);
+
+            var sortedRules = _sortHelper.ApplySort(rules, pagingParameters.OrderBy);
+
+            if (rules != null && pagingParameters.PageNumber != null && pagingParameters.PageSize != null)
+            {
+                return PagedList<ConditionRule>.ToPagedList(sortedRules, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool Update(ConditionRule conditionRule, int id)

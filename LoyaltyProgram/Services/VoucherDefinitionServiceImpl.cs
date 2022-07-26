@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class VoucherDefinitionServiceImpl : VoucherDefinitionService
     {
         private readonly DatabaseContext _databaseContext;
-        public VoucherDefinitionServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<VoucherDefinition> _sortHelper;
+        public VoucherDefinitionServiceImpl(DatabaseContext databaseContext, ISortHelper<VoucherDefinition> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool AddVoucher(VoucherDefinition voucherDefinition)
@@ -31,7 +35,37 @@ namespace LoyaltyProgram.Services
             return false;
         }
 
-        public VoucherDefinition GetVoucher(int id)
+        public List<VoucherDefinition> GetVouchers(int accountId)
+        {
+            //get all voucher 
+            var vouchers = _databaseContext.VoucherDefinitions.Where(v => v.Status == 1).ToList();
+            //get voucher wallet
+            var wallets = _databaseContext.VoucherWallets.Where(w => w.MembershipId == accountId).ToList();
+
+            var count = 0;
+
+            for (int i = 0; i < vouchers.Count; i++)
+            {
+                var voucher = vouchers.ElementAt(i);
+                for (int j = 0; j < wallets.Count; j++)
+                {
+                    var wallet = wallets.ElementAt(j);
+                    if (voucher.Id == wallet.VoucherDefinitionId)
+                    {
+                        vouchers.RemoveAt(i);
+                        count++;
+                        if (count == wallets.Count)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return vouchers;
+        }
+
+        public VoucherDefinition GetVoucher(int? id)
         {
             var voucher = _databaseContext.VoucherDefinitions.FirstOrDefault(b => b.Id == id);
             if (voucher != null)
@@ -49,9 +83,26 @@ namespace LoyaltyProgram.Services
             return _databaseContext.VoucherDefinitions.Where(b => b.Status == 1).Count();
         }
 
-        public List<VoucherDefinition> GetVouchers()
+        public PagedList<VoucherDefinition> GetVouchers(PagingParameters pagingParameters)
         {
-            return _databaseContext.VoucherDefinitions.Where(b => b.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<VoucherDefinition> voucherDefinitions;
+            if (filterString != null)
+            {
+                voucherDefinitions =
+                    _databaseContext.VoucherDefinitions.Where(v => v.Status == 1 && v.Name.Contains(filterString));
+            }
+            else
+            {
+                voucherDefinitions =_databaseContext.VoucherDefinitions.Where(b => b.Status == 1);
+            }
+
+            var sortedList = _sortHelper.ApplySort(voucherDefinitions, pagingParameters.OrderBy);
+            if (voucherDefinitions != null)
+            {
+                return PagedList<VoucherDefinition>.ToPagedList(sortedList, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool UpdateVoucher(VoucherDefinition voucher, int id)
@@ -83,7 +134,10 @@ namespace LoyaltyProgram.Services
                             voucherDb.ExpirationPeriodUnits = voucher.ExpirationPeriodUnits;
                         if (voucher.IsPartialRedeemable != null)
                             voucherDb.IsPartialRedeemable = voucher.IsPartialRedeemable;
-
+                        if (voucher.Image != null)
+                            voucherDb.Image = voucher.Image;
+                        if (voucher.Point != null)
+                            voucherDb.Point = voucher.Point;
                         return _databaseContext.SaveChanges() > 0;
                     }
                 }

@@ -6,5 +6,6 @@ namespace LoyaltyProgram.Models
     public partial class Admin
     {
         public string Email { get; set; } = null!;
+        public int? ProgramId { get; set; }
     }
 }

@@ -23,14 +23,17 @@ namespace LoyaltyProgram.Models
         public virtual DbSet<ConditionGroup> ConditionGroups { get; set; } = null!;
         public virtual DbSet<ConditionRule> ConditionRules { get; set; } = null!;
         public virtual DbSet<Currency> Currencies { get; set; } = null!;
+        public virtual DbSet<Device> Devices { get; set; } = null!;
         public virtual DbSet<EventSource> EventSources { get; set; } = null!;
         public virtual DbSet<MemberReferrerLevel> MemberReferrerLevels { get; set; } = null!;
         public virtual DbSet<MemberTier> MemberTiers { get; set; } = null!;
         public virtual DbSet<Membership> Memberships { get; set; } = null!;
         public virtual DbSet<MembershipCurrency> MembershipCurrencies { get; set; } = null!;
+        public virtual DbSet<Noti> Notis { get; set; } = null!;
         public virtual DbSet<OrderAmountCondition> OrderAmountConditions { get; set; } = null!;
         public virtual DbSet<OrderItemCondition> OrderItemConditions { get; set; } = null!;
         public virtual DbSet<Organization> Organizations { get; set; } = null!;
+        public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<Program> Programs { get; set; } = null!;
         public virtual DbSet<Reward> Rewards { get; set; } = null!;
         public virtual DbSet<Tier> Tiers { get; set; } = null!;
@@ -43,7 +46,7 @@ namespace LoyaltyProgram.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=tcp:loyaltyprogram.database.windows.net,1433;Initial Catalog=Loyalty;Persist Security Info=False;User ID=azureuser;Password=Loyalty@Program;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30");
+                optionsBuilder.UseSqlServer("Server=13.232.213.53,1433;Database=Loyalty;user id=sa;password=Loyalty@Program");
             }
         }
 
@@ -57,30 +60,32 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.ActionDate)
                     .HasColumnType("date")
-                    .HasColumnName("action_date");
+                    .HasColumnName("actionDate");
 
-                entity.Property(e => e.Description).HasColumnName("description");
+                entity.Property(e => e.Description)
+                    .HasMaxLength(400)
+                    .HasColumnName("description");
 
-                entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyalty_program_id");
+                entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyaltyProgramId");
 
-                entity.Property(e => e.MembershipId).HasColumnName("membership_id");
+                entity.Property(e => e.MembershipId).HasColumnName("membershipId");
 
-                entity.Property(e => e.MembershipRewardId).HasColumnName("membership_reward_id");
+                entity.Property(e => e.MembershipRewardId).HasColumnName("membershipRewardId");
 
-                entity.Property(e => e.OrderId).HasColumnName("order_id");
+                entity.Property(e => e.OrderId).HasColumnName("orderId");
 
                 entity.Property(e => e.Points).HasColumnName("points");
 
-                entity.Property(e => e.ReferrerId).HasColumnName("referrer_id");
+                entity.Property(e => e.ReferrerId).HasColumnName("referrerId");
 
-                entity.Property(e => e.ReferrerPoints).HasColumnName("referrer_points");
+                entity.Property(e => e.ReferrerPoints).HasColumnName("referrerPoints");
 
-                entity.Property(e => e.ReferrerRewardId).HasColumnName("referrer_reward_id");
+                entity.Property(e => e.ReferrerRewardId).HasColumnName("referrerRewardId");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.Property(e => e.Type)
-                    .HasMaxLength(200)
+                    .HasMaxLength(100)
                     .HasColumnName("type");
 
                 entity.HasOne(d => d.LoyaltyProgram)
@@ -96,24 +101,25 @@ namespace LoyaltyProgram.Models
                 entity.HasOne(d => d.MembershipReward)
                     .WithMany(p => p.ActionMembershipRewards)
                     .HasForeignKey(d => d.MembershipRewardId)
-                    .HasConstraintName("FK_Action_Reward_Membership");
+                    .HasConstraintName("FK_Action_Reward");
 
                 entity.HasOne(d => d.ReferrerReward)
                     .WithMany(p => p.ActionReferrerRewards)
                     .HasForeignKey(d => d.ReferrerRewardId)
-                    .HasConstraintName("FK_Action_Reward_Referrer");
+                    .HasConstraintName("FK_Action_Reward1");
             });
 
             modelBuilder.Entity<Admin>(entity =>
             {
-                entity.HasKey(e => e.Email)
-                    .HasName("PK__Admin__AB6E6165E6F7282F");
+                entity.HasKey(e => e.Email);
 
                 entity.ToTable("Admin");
 
                 entity.Property(e => e.Email)
-                    .HasMaxLength(200)
+                    .HasMaxLength(250)
                     .HasColumnName("email");
+
+                entity.Property(e => e.ProgramId).HasColumnName("programID");
             });
 
             modelBuilder.Entity<Brand>(entity =>
@@ -123,11 +129,11 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(200)
                     .HasColumnName("name");
 
                 entity.Property(e => e.OrganizationId).HasColumnName("organizationId");
@@ -148,23 +154,25 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.Amount).HasColumnName("amount");
 
-                entity.Property(e => e.BrandId).HasColumnName("brand_id");
+                entity.Property(e => e.BrandId).HasColumnName("brandId");
 
                 entity.Property(e => e.CardholderName)
                     .HasMaxLength(200)
-                    .HasColumnName("cardholder_name");
+                    .HasColumnName("cardholderName");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("date")
-                    .HasColumnName("created_at");
+                    .HasColumnName("createdAt");
 
-                entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
+                entity.Property(e => e.CurrencyId).HasColumnName("currencyId");
 
-                entity.Property(e => e.Description).HasColumnName("description");
+                entity.Property(e => e.Description)
+                    .HasMaxLength(400)
+                    .HasColumnName("description");
 
                 entity.Property(e => e.Discount).HasColumnName("discount");
 
-                entity.Property(e => e.MembershipId).HasColumnName("membership_id");
+                entity.Property(e => e.MembershipId).HasColumnName("membershipId");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
@@ -201,8 +209,12 @@ namespace LoyaltyProgram.Models
                     .HasColumnName("createdDate");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(200)
+                    .HasColumnName("name");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
@@ -227,7 +239,7 @@ namespace LoyaltyProgram.Models
                     .HasColumnName("createdAt");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.EndDate)
@@ -246,6 +258,10 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.MinRedeemablePoints).HasColumnName("minRedeemablePoints");
 
+                entity.Property(e => e.Name)
+                    .HasMaxLength(100)
+                    .HasColumnName("name");
+
                 entity.Property(e => e.SpendingValue).HasColumnName("spendingValue");
 
                 entity.Property(e => e.StartDate)
@@ -257,7 +273,7 @@ namespace LoyaltyProgram.Models
                 entity.HasOne(d => d.LoyaltyProgram)
                     .WithMany(p => p.ConditionRules)
                     .HasForeignKey(d => d.LoyaltyProgramId)
-                    .HasConstraintName("FK_ConditionRule_LoyaltyProgram");
+                    .HasConstraintName("FK_ConditionRule_Program");
             });
 
             modelBuilder.Entity<Currency>(entity =>
@@ -267,13 +283,13 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyaltyProgramId");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(200)
                     .HasColumnName("name");
 
                 entity.Property(e => e.NextResetDate)
@@ -281,11 +297,26 @@ namespace LoyaltyProgram.Models
                     .HasColumnName("nextResetDate");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+            });
 
-                entity.HasOne(d => d.LoyaltyProgram)
-                    .WithMany(p => p.Currencies)
-                    .HasForeignKey(d => d.LoyaltyProgramId)
-                    .HasConstraintName("FK_Currency_LoyaltyProgram1");
+            modelBuilder.Entity<Device>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountId, e.DeviceId });
+
+                entity.ToTable("Device");
+
+                entity.Property(e => e.AccountId).HasColumnName("accountID");
+
+                entity.Property(e => e.DeviceId)
+                    .HasMaxLength(800)
+                    .IsUnicode(false)
+                    .HasColumnName("deviceId");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Devices)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Device_Membership");
             });
 
             modelBuilder.Entity<EventSource>(entity =>
@@ -294,11 +325,11 @@ namespace LoyaltyProgram.Models
 
                 entity.ToTable("EventSource");
 
-                entity.Property(e => e.PartnerId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("partner_id");
+                entity.Property(e => e.PartnerId).HasColumnName("partnerId");
 
-                entity.Property(e => e.Description).HasColumnName("description");
+                entity.Property(e => e.Description)
+                    .HasMaxLength(400)
+                    .HasColumnName("description");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(200)
@@ -314,7 +345,7 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.RatioReferrerPoints).HasColumnName("ratioReferrerPoints");
@@ -326,16 +357,12 @@ namespace LoyaltyProgram.Models
 
             modelBuilder.Entity<MemberTier>(entity =>
             {
-                entity.HasKey(e => new { e.LoyaltyMemberId, e.LoyaltyTierId });
-
                 entity.ToTable("MemberTier");
 
-                entity.Property(e => e.LoyaltyMemberId).HasColumnName("loyaltyMemberId");
-
-                entity.Property(e => e.LoyaltyTierId).HasColumnName("loyaltyTierId");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.EffectiveDate)
@@ -346,15 +373,19 @@ namespace LoyaltyProgram.Models
                     .HasColumnType("date")
                     .HasColumnName("expirationDate");
 
+                entity.Property(e => e.LoyaltyMemberId).HasColumnName("loyaltyMemberId");
+
+                entity.Property(e => e.LoyaltyTierId).HasColumnName("loyaltyTierId");
+
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(200)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
-                entity.Property(e => e.UdpateTierDate)
+                entity.Property(e => e.UpdateTierDate)
                     .HasColumnType("date")
-                    .HasColumnName("udpateTierDate");
+                    .HasColumnName("updateTierDate");
 
                 entity.HasOne(d => d.LoyaltyMember)
                     .WithMany(p => p.MemberTiers)
@@ -380,16 +411,17 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.CanReceivePromotions).HasColumnName("canReceivePromotions");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.Email)
                     .HasMaxLength(200)
+                    .IsUnicode(false)
                     .HasColumnName("email");
 
-                entity.Property(e => e.EnrollmenDate)
+                entity.Property(e => e.EnrollmentDate)
                     .HasColumnType("date")
-                    .HasColumnName("enrollmenDate");
+                    .HasColumnName("enrollmentDate");
 
                 entity.Property(e => e.LastTransactionDate)
                     .HasColumnType("date")
@@ -398,7 +430,7 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyaltyProgramId");
 
                 entity.Property(e => e.MembershipCode)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("membershipCode");
 
                 entity.Property(e => e.MembershipEndDate)
@@ -411,14 +443,20 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.ReferrerMemberId).HasColumnName("referrerMemberId");
 
-                entity.Property(e => e.RefreshTokenExpiryTime).HasColumnType("date");
+                entity.Property(e => e.RefreshToken)
+                    .HasColumnType("text")
+                    .HasColumnName("refreshToken");
+
+                entity.Property(e => e.RefreshTokenExpiryTime)
+                    .HasColumnType("date")
+                    .HasColumnName("refreshTokenExpiryTime");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.HasOne(d => d.LoyaltyProgram)
                     .WithMany(p => p.Memberships)
                     .HasForeignKey(d => d.LoyaltyProgramId)
-                    .HasConstraintName("FK_Membership_LoyaltyProgram");
+                    .HasConstraintName("FK_Membership_Program");
             });
 
             modelBuilder.Entity<MembershipCurrency>(entity =>
@@ -432,7 +470,7 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.CurrencyId).HasColumnName("currencyId");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.ExpirationPoints).HasColumnName("expirationPoints");
@@ -444,7 +482,7 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.MembershipId).HasColumnName("membershipId");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(200)
                     .HasColumnName("name");
 
                 entity.Property(e => e.PointsBalance).HasColumnName("pointsBalance");
@@ -468,6 +506,29 @@ namespace LoyaltyProgram.Models
                     .HasConstraintName("FK_MembershipCurrency_Membership");
             });
 
+            modelBuilder.Entity<Noti>(entity =>
+            {
+                entity.ToTable("Noti");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("accountId");
+
+                entity.Property(e => e.Body)
+                    .HasMaxLength(800)
+                    .HasColumnName("body");
+
+                entity.Property(e => e.Date)
+                    .HasColumnType("date")
+                    .HasColumnName("date");
+
+                entity.Property(e => e.IsRead).HasColumnName("isRead");
+
+                entity.Property(e => e.Title)
+                    .HasMaxLength(400)
+                    .HasColumnName("title");
+            });
+
             modelBuilder.Entity<OrderAmountCondition>(entity =>
             {
                 entity.ToTable("OrderAmountCondition");
@@ -477,14 +538,14 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.ConditionGroupId).HasColumnName("conditionGroupId");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.MinOrderAmount).HasColumnName("minOrderAmount");
 
                 entity.Property(e => e.NextOrderTotalAmount).HasColumnName("nextOrderTotalAmount");
 
-                entity.Property(e => e.NextOrderTotalAmountAfterDiscount).HasColumnName("nextOrderTotalAmountAfterDiscount");
+                entity.Property(e => e.NextOrderTotalAmountAfterDiscont).HasColumnName("nextOrderTotalAmountAfterDiscont");
 
                 entity.Property(e => e.OrderTotalAmountAfterDiscount).HasColumnName("orderTotalAmountAfterDiscount");
 
@@ -511,12 +572,12 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.ConditionGroupId).HasColumnName("conditionGroupId");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.NextQuantity).HasColumnName("nextQuantity");
 
-                entity.Property(e => e.ProductId).HasColumnName("product_id");
+                entity.Property(e => e.ProductId).HasColumnName("productId");
 
                 entity.Property(e => e.Quantity).HasColumnName("quantity");
 
@@ -539,14 +600,30 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(200)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.ToTable("Product");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Img)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("img");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(200)
+                    .HasColumnName("name");
             });
 
             modelBuilder.Entity<Program>(entity =>
@@ -558,11 +635,11 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.BrandId).HasColumnName("brandId");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(200)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Status).HasColumnName("status");
@@ -570,7 +647,7 @@ namespace LoyaltyProgram.Models
                 entity.HasOne(d => d.Brand)
                     .WithMany(p => p.Programs)
                     .HasForeignKey(d => d.BrandId)
-                    .HasConstraintName("FK_LoyaltyProgram_Brand");
+                    .HasConstraintName("FK_Program_Brand");
             });
 
             modelBuilder.Entity<Reward>(entity =>
@@ -581,19 +658,25 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("date")
-                    .HasColumnName("created_at");
+                    .HasColumnName("createdAt");
 
-                entity.Property(e => e.Description).HasColumnName("description");
+                entity.Property(e => e.Description)
+                    .HasMaxLength(400)
+                    .HasColumnName("description");
 
-                entity.Property(e => e.Images).HasColumnName("images");
+                entity.Property(e => e.Images)
+                    .HasColumnType("text")
+                    .HasColumnName("images");
 
-                entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyalty_program_id");
+                entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyaltyProgramId");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(200)
                     .HasColumnName("name");
 
-                entity.Property(e => e.Paramaters).HasColumnName("paramaters");
+                entity.Property(e => e.Parameters)
+                    .HasColumnType("text")
+                    .HasColumnName("parameters");
 
                 entity.Property(e => e.Redeemed).HasColumnName("redeemed");
 
@@ -602,7 +685,7 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.Stock).HasColumnName("stock");
 
                 entity.Property(e => e.Type)
-                    .HasMaxLength(50)
+                    .HasMaxLength(200)
                     .HasColumnName("type");
 
                 entity.HasOne(d => d.LoyaltyProgram)
@@ -618,7 +701,7 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.LoyaltyProgramId).HasColumnName("loyaltyProgramId");
@@ -626,7 +709,7 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.MinPoints).HasColumnName("minPoints");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(200)
                     .HasColumnName("name");
 
                 entity.Property(e => e.RatioPoints).HasColumnName("ratioPoints");
@@ -638,7 +721,7 @@ namespace LoyaltyProgram.Models
                 entity.HasOne(d => d.LoyaltyProgram)
                     .WithMany(p => p.Tiers)
                     .HasForeignKey(d => d.LoyaltyProgramId)
-                    .HasConstraintName("FK_Tier_LoyaltyProgram");
+                    .HasConstraintName("FK_Tier_Program");
             });
 
             modelBuilder.Entity<Transaction>(entity =>
@@ -647,19 +730,19 @@ namespace LoyaltyProgram.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.CardId).HasColumnName("card_id");
+                entity.Property(e => e.CardId).HasColumnName("cardId");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
-                entity.Property(e => e.MembershipId).HasColumnName("membershipID");
+                entity.Property(e => e.MembershipId).HasColumnName("membershipId");
 
                 entity.Property(e => e.OrderId).HasColumnName("orderId");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
-                entity.Property(e => e.TotalPrice).HasColumnName("total_price");
+                entity.Property(e => e.TotalPrice).HasColumnName("totalPrice");
 
                 entity.Property(e => e.TransactionDate)
                     .HasColumnType("date")
@@ -683,7 +766,7 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.DiscountValue).HasColumnName("discountValue");
@@ -699,21 +782,26 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.ExpirationPeriod).HasColumnName("expirationPeriod");
 
                 entity.Property(e => e.ExpirationPeriodUnits)
-                    .HasMaxLength(10)
-                    .HasColumnName("expirationPeriodUnits")
-                    .IsFixedLength();
+                    .HasMaxLength(50)
+                    .HasColumnName("expirationPeriodUnits");
+
+                entity.Property(e => e.Image)
+                    .HasMaxLength(400)
+                    .IsUnicode(false)
+                    .HasColumnName("image");
 
                 entity.Property(e => e.IsPartialRedeemable).HasColumnName("isPartialRedeemable");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(150)
+                    .HasMaxLength(200)
                     .HasColumnName("name");
+
+                entity.Property(e => e.Point).HasColumnName("point");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.Property(e => e.VoucherCode)
-                    .HasMaxLength(150)
-                    .IsUnicode(false)
+                    .HasColumnType("text")
                     .HasColumnName("voucherCode");
             });
 
@@ -728,7 +816,7 @@ namespace LoyaltyProgram.Models
                 entity.Property(e => e.VoucherDefinitionId).HasColumnName("voucherDefinitionId");
 
                 entity.Property(e => e.Description)
-                    .HasColumnType("text")
+                    .HasMaxLength(400)
                     .HasColumnName("description");
 
                 entity.Property(e => e.IsPartialRedeemable).HasColumnName("isPartialRedeemable");
@@ -755,8 +843,6 @@ namespace LoyaltyProgram.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_VoucherWallet_VoucherDefinition");
             });
-
-            modelBuilder.HasSequence<int>("SalesOrderNumber", "SalesLT");
 
             OnModelCreatingPartial(modelBuilder);
         }

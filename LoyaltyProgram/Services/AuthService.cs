@@ -6,7 +6,6 @@ namespace LoyaltyProgram.Services
     {
         public Membership Login(string email);
         public bool CheckExisted(string email);
-
         public Membership GetMembership(string email);
         public bool RevokeAll();
 

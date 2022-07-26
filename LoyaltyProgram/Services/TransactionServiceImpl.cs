@@ -1,13 +1,17 @@
-﻿using LoyaltyProgram.Models;
+﻿using LoyaltyProgram.Helpers;
+using LoyaltyProgram.Models;
+using LoyaltyProgram.Utils;
 
 namespace LoyaltyProgram.Services
 {
     public class TransactionServiceImpl : TransactionService
     {
         private readonly DatabaseContext _databaseContext;
-        public TransactionServiceImpl(DatabaseContext databaseContext)
+        private ISortHelper<Transaction> _sortHelper;
+        public TransactionServiceImpl(DatabaseContext databaseContext, ISortHelper<Transaction> sortHelper)
         {
             _databaseContext = databaseContext;
+            _sortHelper = sortHelper;
         }
 
         public bool Add(Transaction transaction)
@@ -49,9 +53,25 @@ namespace LoyaltyProgram.Services
             return _databaseContext.Transactions.Where(b => b.Status == 1).Count();
         }
 
-        public List<Transaction> GetTransactions()
+        public PagedList<Transaction> GetTransactions(PagingParameters pagingParameters)
         {
-            return _databaseContext.Transactions.Where(b => b.Status == 1).ToList();
+            var filterString = pagingParameters.FilterString;
+            IQueryable<Transaction> transactions;
+            if (filterString != null)
+            {
+                transactions = _databaseContext.Transactions.Where(b => b.Status == 1 && _databaseContext.Memberships.First(m => m.AccountId == b.MembershipId).Email.Contains(filterString));
+            }
+            else
+            {
+                transactions = _databaseContext.Transactions.Where(b => b.Status == 1);
+            }
+
+            var sortedTransaction = _sortHelper.ApplySort(transactions, pagingParameters.OrderBy);
+            if (transactions != null)
+            {
+                return PagedList<Transaction>.ToPagedList(sortedTransaction, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
         }
 
         public bool Update(Transaction transaction, int id)
@@ -80,6 +100,32 @@ namespace LoyaltyProgram.Services
             }
 
             return false;
+        }
+
+        public PagedList<Transaction> GetTransactionsByMember(int membershipId, PagingParameters pagingParameters)
+        {
+            var transactions = _databaseContext.Transactions.Where(t => t.MembershipId == membershipId);
+            var sortedTransactions = _sortHelper.ApplySort(transactions, pagingParameters.OrderBy);
+            if (transactions != null)
+            {
+                return PagedList<Transaction>.ToPagedList(sortedTransactions, pagingParameters.PageNumber, pagingParameters.PageSize);
+            }
+            return null;
+        }
+
+        public int GetCount(int membershipId)
+        {
+            return _databaseContext.Transactions.Count(t => t.MembershipId == membershipId);
+        }
+
+        public List<Transaction> GetAllTransactionsByMember(int membershipId)
+        {
+            var transactions = _databaseContext.Transactions.Where(t => t.MembershipId == membershipId).ToList();
+            if (transactions != null)
+            {
+                return transactions;
+            }
+            return null;
         }
     }
 }

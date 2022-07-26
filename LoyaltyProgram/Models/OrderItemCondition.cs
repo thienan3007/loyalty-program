@@ -10,10 +10,10 @@ namespace LoyaltyProgram.Models
         public int? Quantity { get; set; }
         public int? NextQuantity { get; set; }
         public int? TierSequenceNumber { get; set; }
-        public double? QuantityGainPoint { get; set; }
+        public int? QuantityGainPoint { get; set; }
         public int? Status { get; set; }
-        public string? Description { get; set; }
         public int? ProductId { get; set; }
+        public string? Description { get; set; }
 
         public virtual ConditionGroup? ConditionGroup { get; set; }
     }
